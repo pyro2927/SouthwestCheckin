@@ -2,6 +2,8 @@
 
 ![](http://www.southwest-heart.com/img/heart/heart_1.jpg)
 
+This python script checks your flight reservation with Southwest and then checks you in at exactly 24 hours before your flight.  Queue up the script and it will `sleep` until the earliest possible check-in time.
+
 ## Requirements
 
 * Python 2.x
