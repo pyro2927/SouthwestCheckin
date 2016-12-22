@@ -31,6 +31,8 @@ if date > tomorrow:
     print "Too early to check in, waiting {} seconds".format(delta)
     time.sleep(delta)
 
+print "Attempting check-in..."
+
 # Get our passengers to get boarding passes for
 passengers = []
 for passenger in body['passengers']:
@@ -43,7 +45,7 @@ r = requests.post(url, headers=headers, json={'names': passengers})
 
 body = r.json()
 
-if body['httpStatusCode'] == 'FORBIDDEN':
+if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
     print body['message']
 else:
     # Spit out info about boarding number
