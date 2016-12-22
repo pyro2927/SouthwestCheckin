@@ -1,5 +1,7 @@
 # SW Checkin
 
+![](http://www.southwest-heart.com/img/heart/heart_1.jpg)
+
 ## Requirements
 
 * Python 2.x
