@@ -7,6 +7,7 @@ from datetime import timedelta
 import pytz
 from tzlocal import get_localzone
 import time
+from math import trunc
 
 # Pulled from proxying the Southwest iOS App
 headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/vnd.swacorp.com.mobile.reservations-v1.0+json', 'X-API-Key': 'l7xxab4b3533b8d54bad9df230deb96a6f90', 'Accept': '*/*'}
@@ -25,15 +26,29 @@ body = r.json()
 if 'httpStatusCode' in body and body['httpStatusCode'] == 'NOT_FOUND':
     print body['message']
 else:
-    departure_time = body['itinerary']['originationDestinations'][0]['segments'][0]['departureDateTime']
+    now = datetime.now(pytz.utc).astimezone(get_localzone())
+    tomorrow = now + timedelta(days=1)
+    date = now
 
-    date = parse(departure_time)
-    tomorrow = datetime.now(pytz.utc).astimezone(get_localzone()) + timedelta(days=1)
+    airport = ""
+
+    # Get the correct flight information
+    for leg in body['itinerary']['originationDestinations']:
+        departure_time = leg['segments'][0]['departureDateTime']
+        airport = leg['segments'][0]['originationAirportCode']
+        date = parse(departure_time)
+        # Stop when we reach a future flight
+        if date > now:
+            break
+
+    print "Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p'))
 
     # Wait until checkin time
     if date > tomorrow:
         delta = (date-tomorrow).total_seconds()
-        print "Too early to check in, waiting {} seconds".format(delta)
+        m, s = divmod(delta, 60)
+        h, m = divmod(m, 60)
+        print "Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s)
         time.sleep(delta)
 
     print "Attempting check-in..."
