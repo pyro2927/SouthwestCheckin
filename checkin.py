@@ -24,7 +24,7 @@ body = r.json()
 
 # Confirm this reservation is found
 if 'httpStatusCode' in body and body['httpStatusCode'] == 'NOT_FOUND':
-    print body['message']
+    print(body['message'])
 else:
     now = datetime.now(pytz.utc).astimezone(get_localzone())
     tomorrow = now + timedelta(days=1)
@@ -41,17 +41,17 @@ else:
         if date > now:
             break
 
-    print "Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p'))
+    print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
 
     # Wait until checkin time
     if date > tomorrow:
         delta = (date-tomorrow).total_seconds()
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
-        print "Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s)
+        print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
         time.sleep(delta)
 
-    print "Attempting check-in..."
+    print("Attempting check-in...")
 
     # Get our passengers to get boarding passes for
     passengers = []
@@ -66,9 +66,9 @@ else:
     body = r.json()
 
     if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
-        print body['message']
+        print(body['message'])
     else:
         # Spit out info about boarding number
         for checkinDocument in body['passengerCheckInDocuments']:
             for doc in checkinDocument['checkinDocuments']:
-                print "You got {}{}!".format(doc['boardingGroup'], doc['boardingGroupNumber'])
+                print("You got {}{}!".format(doc['boardingGroup'], doc['boardingGroupNumber']))
