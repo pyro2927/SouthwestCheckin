@@ -6,7 +6,7 @@ This python script checks your flight reservation with Southwest and then checks
 
 ## Requirements
 
-* Python 2.x
+* Python (should work with 2.x or 3.x thanks to @ratabora)
 * [pip](https://pypi.python.org/pypi/pip)
 
 ## Setup
