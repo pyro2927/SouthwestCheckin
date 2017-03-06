@@ -3,3 +3,5 @@ python-dateutil
 pytz
 requests
 tzlocal
+google-api-python-client
+scrapy
