@@ -2,4 +2,6 @@ language: python
 python:
   - "2.7"
   - "3.6"
-script: pep8 --show-source --max-line-length=120 ./checkin.py
+script:
+  - pep8 --show-source --max-line-length=120 ./checkin.py
+  - pylint ./checkin.py

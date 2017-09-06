@@ -1,5 +1,6 @@
 datetime
 pep8
+pylint
 python-dateutil
 pytz
 requests
