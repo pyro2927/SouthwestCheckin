@@ -15,9 +15,9 @@ headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/vnd.swac
 reservation_number = sys.argv[1]
 first_name = sys.argv[2]
 last_name = sys.argv[3]
-checkin_early_seconds = 5 * 60
-checkin_interval_seconds = 10
-
+checkin_early_seconds = 5
+checkin_interval_seconds = 0.25
+max_attemps = 40
 
 # Find our existing record
 url = "https://mobile.southwest.com/api/extensions/v1/mobile/reservations/record-locator/{}?first-name={}&last-name={}".format(reservation_number, first_name, last_name)
@@ -64,6 +64,7 @@ else:
     url = "https://mobile.southwest.com/api/extensions/v1/mobile/reservations/record-locator/{}/boarding-passes".format(reservation_number)
 
     success = False 
+    attempts = 0
 
     while not success:
 
@@ -72,9 +73,14 @@ else:
         body = r.json()
 
         if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
+            attempts += 1
             print(body['message'])
-            print("Waiting {} seconds before retrying...".format(checkin_interval_seconds))
-            time.sleep(checkin_interval_seconds)
+            if attempts > max_attemps:
+                print("Max number of attempts exceeded, killing self")
+                success = True
+            else:
+                print("Attempt {}, waiting {} seconds before retrying...".format(attempts, checkin_interval_seconds))
+                time.sleep(checkin_interval_seconds)
         else:
             # Spit out info about boarding number
             for checkinDocument in body['passengerCheckInDocuments']:
