@@ -9,8 +9,12 @@ from tzlocal import get_localzone
 import time
 from math import trunc
 
+API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
+USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
+BASE_URL = 'https://mobile.southwest.com/api/'
+
 # Pulled from proxying the Southwest iOS App
-headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/vnd.swacorp.com.mobile.reservations-v1.0+json', 'X-API-Key': 'l7xxab4b3533b8d54bad9df230deb96a6f90', 'Accept': '*/*'}
+headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
 
 reservation_number = sys.argv[1]
 first_name = sys.argv[2]
@@ -19,71 +23,55 @@ checkin_early_seconds = 5
 checkin_interval_seconds = 0.25
 max_attemps = 40
 
-# Find our existing record
-url = "https://mobile.southwest.com/api/extensions/v1/mobile/reservations/record-locator/{}?first-name={}&last-name={}".format(reservation_number, first_name, last_name)
+def lookup_existing_reservation(number, first, last):
+    # Find our existing record
+    url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
+    r = requests.get(url, headers=headers)
+    return r.json()
 
-r = requests.get(url, headers=headers)
-body = r.json()
+def get_checkin_data(number, first, last):
+    url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
+    r = requests.get(url, headers=headers)
+    # if there is an error, die here
+    if 'httpStatusCode' in body and body['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST']:
+        print(body['message'])
+        sys.exit()
+    return r.json()
 
-# Confirm this reservation is found
-if 'httpStatusCode' in body and body['httpStatusCode'] == 'NOT_FOUND':
-    print(body['message'])
-else:
-    now = datetime.now(pytz.utc).astimezone(get_localzone())
-    tomorrow = now + timedelta(days=1)
-    date = now
+# work work work
+body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
-    airport = ""
+# wait until we have the proper time
+# TODO: get the fucking time
+now = datetime.now(pytz.utc).astimezone(get_localzone())
+tomorrow = now + timedelta(days=1)
+date = now
 
-    # Get the correct flight information
-    for leg in body['itinerary']['originationDestinations']:
-        departure_time = leg['segments'][0]['departureDateTime']
-        airport = leg['segments'][0]['originationAirportCode']
-        date = parse(departure_time)
-        # Stop when we reach a future flight
-        if date > now:
-            break
+# get checkin data from first api call
+data = get_checkin_data(reservation_number, first_name, last_name)
+info_needed = data['checkInViewReservationPage']['_links']['checkIn']
+url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
 
-    print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
+success = False 
+attempts = 0
 
-    # Wait until checkin time
-    if date > tomorrow:
-        delta = (date-tomorrow).total_seconds() - checkin_early_seconds
-        m, s = divmod(delta, 60)
-        h, m = divmod(m, 60)
-        print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
-        time.sleep(delta)
+while not success:
+    print("Attempting check-in...")
+    r = requests.post(url, headers=headers, json=info_needed['body'])
+    body = r.json()
 
-    # Get our passengers to get boarding passes for
-    passengers = []
-    for passenger in body['passengers']:
-        passengers.append({'firstName': passenger['secureFlightName']['firstName'], 'lastName': passenger['secureFlightName']['lastName']})
-
-    # Setting up request 
-    headers['Content-Type'] = 'application/vnd.swacorp.com.mobile.boarding-passes-v1.0+json'
-    url = "https://mobile.southwest.com/api/extensions/v1/mobile/reservations/record-locator/{}/boarding-passes".format(reservation_number)
-
-    success = False 
-    attempts = 0
-
-    while not success:
-
-        print("Attempting check-in...")
-        r = requests.post(url, headers=headers, json={'names': passengers})
-        body = r.json()
-
-        if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
-            attempts += 1
-            print(body['message'])
-            if attempts > max_attemps:
-                print("Max number of attempts exceeded, killing self")
-                success = True
-            else:
-                print("Attempt {}, waiting {} seconds before retrying...".format(attempts, checkin_interval_seconds))
-                time.sleep(checkin_interval_seconds)
-        else:
-            # Spit out info about boarding number
-            for checkinDocument in body['passengerCheckInDocuments']:
-                for doc in checkinDocument['checkinDocuments']:
-                    print("You got {}{}!".format(doc['boardingGroup'], doc['boardingGroupNumber']))
+    if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
+        attempts += 1
+        print(body['message'])
+        if attempts > max_attemps:
+            print("Max number of attempts exceeded, killing self")
             success = True
+        else:
+            print("Attempt {}, waiting {} seconds before retrying...".format(attempts, checkin_interval_seconds))
+            time.sleep(checkin_interval_seconds)
+    else:
+        # Spit out info about boarding number
+        for flight in body['checkInConfirmationPage']['flights']:
+            for doc in flight['passengers']:
+                print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
+        success = True
