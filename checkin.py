@@ -1,7 +1,21 @@
 #!/usr/bin/env python
+"""Southwest Checkin.
+
+Usage:
+  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [-v | --verbose]
+  checkin.py (-h | --help)
+  checkin.py --version
+
+Options:
+  -h --help     Show this screen.
+  -v --verbose  Show debugging information.
+  --version     Show version.
+
+"""
 from datetime import datetime
 from datetime import timedelta
 from dateutil.parser import parse
+from docopt import docopt
 from geopy import geocoders
 from math import trunc
 from tzlocal import get_localzone
@@ -13,16 +27,12 @@ import time
 API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
 USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
 BASE_URL = 'https://mobile.southwest.com/api/'
+CHECKIN_EARLY_SECONDS = 5
+CHECKIN_INTERVAL_SECONDS = 0.25
+MAX_ATTEMPTS = 40
 
 # Pulled from proxying the Southwest iOS App
 headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
-
-reservation_number = sys.argv[1]
-first_name = sys.argv[2]
-last_name = sys.argv[3]
-checkin_early_seconds = 5
-checkin_interval_seconds = 0.25
-MAX_ATTEMPTS = 40
 
 def lookup_existing_reservation(number, first, last):
     # Find our existing record
@@ -50,7 +60,7 @@ def checkin(number, first, last):
             print(data['message'])
             if attempts > MAX_ATTEMPTS:
                 sys.exit("Unable to get checkin data, killing self")
-            time.sleep(checkin_interval_seconds)
+            time.sleep(CHECKIN_INTERVAL_SECONDS)
             continue
         success = True
 
@@ -66,8 +76,8 @@ def checkin(number, first, last):
             print(body['message'])
             if attempts > MAX_ATTEMPTS:
                 sys.exit("Max number of attempts exceeded, killing self")
-            print("Attempt {}, waiting {} seconds before retrying...".format(attempts, checkin_interval_seconds))
-            time.sleep(checkin_interval_seconds)
+            print("Attempt {}, waiting {} seconds before retrying...".format(attempts, CHECKIN_INTERVAL_SECONDS))
+            time.sleep(CHECKIN_INTERVAL_SECONDS)
         else:
             # Spit out info about boarding number
             for flight in body['checkInConfirmationPage']['flights']:
@@ -83,7 +93,7 @@ def schedule_checkin(flight_time, number, first, last):
     # check to see if we need to sleep until 24 hours before flight
     if checkin_time > current_time:
         # calculate duration to sleep
-        delta = (checkin_time - current_time).total_seconds() - checkin_early_seconds
+        delta = (checkin_time - current_time).total_seconds() - CHECKIN_EARLY_SECONDS
         # pretty print our wait time
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
@@ -92,7 +102,13 @@ def schedule_checkin(flight_time, number, first, last):
     checkin(number, first, last)
 
 if __name__ == '__main__':
+    arguments = docopt(__doc__, version='Southwest Checkin 0.2')
+
     # work work
+    reservation_number = arguments['CONFIRMATION_NUMBER']
+    first_name = arguments['FIRST_NAME']
+    last_name = arguments['LAST_NAME']
+
     body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
     # setup a geocoder
@@ -104,7 +120,7 @@ if __name__ == '__main__':
     tomorrow = now + timedelta(days=1)
     date = now
 
-    # find the next departure time
+    # find all eligible legs for checkin
     for leg in body['bounds']:
         # calculate departure for this leg
         airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
