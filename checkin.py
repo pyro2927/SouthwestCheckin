@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-import requests
-import sys
-from dateutil.parser import parse
 from datetime import datetime
 from datetime import timedelta
-import pytz
-from tzlocal import get_localzone
-import time
+from dateutil.parser import parse
+from geopy import geocoders
 from math import trunc
+from tzlocal import get_localzone
+import pytz
+import requests
+import sys
+import time
 
 API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
 USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
@@ -27,7 +28,7 @@ def lookup_existing_reservation(number, first, last):
     # Find our existing record
     url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
     r = requests.get(url, headers=headers)
-    return r.json()
+    return r.json()['viewReservationViewPage']
 
 def get_checkin_data(number, first, last):
     url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
@@ -41,11 +42,33 @@ def get_checkin_data(number, first, last):
 # work work work
 body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
-# wait until we have the proper time
-# TODO: get the fucking time
+# setup a geocoder
+g = geocoders.GoogleV3()
+
+# Get our local time
 now = datetime.now(pytz.utc).astimezone(get_localzone())
 tomorrow = now + timedelta(days=1)
 date = now
+
+# find the next departure time
+for leg in body['bounds']:
+    # calculate departure for this leg
+    airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
+    takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
+    date = datetime.strptime(takeoff, '%Y-%m-%d %H:%M').replace(tzinfo=g.timezone(g.geocode(airport).point))
+    if date > now:
+        break
+
+# print found information
+print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
+
+# if we're outside of 24-hours before the flight, wait
+if date > tomorrow:
+    delta = (date-tomorrow).total_seconds() - checkin_early_seconds
+    m, s = divmod(delta, 60)
+    h, m = divmod(m, 60)
+    print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
+    time.sleep(delta)
 
 # get checkin data from first api call
 data = get_checkin_data(reservation_number, first_name, last_name)
