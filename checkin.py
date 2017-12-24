@@ -22,86 +22,95 @@ first_name = sys.argv[2]
 last_name = sys.argv[3]
 checkin_early_seconds = 5
 checkin_interval_seconds = 0.25
-max_attemps = 40
+MAX_ATTEMPTS = 40
 
 def lookup_existing_reservation(number, first, last):
     # Find our existing record
-    url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
+    url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, number, first, last)
     r = requests.get(url, headers=headers)
     return r.json()['viewReservationViewPage']
 
 def get_checkin_data(number, first, last):
-    url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
+    url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, number, first, last)
     r = requests.get(url, headers=headers)
-    return r.json()
+    return r.json()['checkInViewReservationPage']
 
-# work work work
-body = lookup_existing_reservation(reservation_number, first_name, last_name)
+def checkin(number, first, last):
+    success = False
+    attempts = 0
+    data = {}
+    # You might ask yourself, "Why the hell does this exist?"
+    # Basically, there sometimes appears a "hiccup" in Southwest where things
+    # aren't exactly available 24-hours before, so we try a few times
+    while not success:
+        # get checkin data from first api call
+        data = get_checkin_data(number, first, last)
+        if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
+            attempts += 1
+            print(data['message'])
+            if attempts > MAX_ATTEMPTS:
+                sys.exit("Unable to get checkin data, killing self")
+            time.sleep(checkin_interval_seconds)
+            continue
+        success = True
 
-# setup a geocoder
-g = geocoders.GoogleV3()
-
-# Get our local time
-now = datetime.now(pytz.utc).astimezone(get_localzone())
-tomorrow = now + timedelta(days=1)
-date = now
-
-# find the next departure time
-for leg in body['bounds']:
-    # calculate departure for this leg
-    airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
-    takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
-    date = datetime.strptime(takeoff, '%Y-%m-%d %H:%M').replace(tzinfo=g.timezone(g.geocode(airport).point))
-    if date > now:
-        break
-
-# print found information
-print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
-
-# if we're outside of 24-hours before the flight, wait
-if date > tomorrow:
-    delta = (date-tomorrow).total_seconds() - checkin_early_seconds
-    m, s = divmod(delta, 60)
-    h, m = divmod(m, 60)
-    print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
-    time.sleep(delta)
-
-success = False 
-attempts = 0
-# You might ask yourself, "Why the hell does this exist?"
-# Basically, there sometimes appears a "hiccup" in Southwest where things
-# aren't exactly available 24-hours before, so we try a few times
-
-while not success:
-    # get checkin data from first api call
-    data = get_checkin_data(reservation_number, first_name, last_name)
-    if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST']:
-        # if there is an error, try again
-        print(data['message'])
-        time.sleep(checkin_interval_seconds)
-    success = True
-
-success = False 
-
-while not success:
-    print("Attempting check-in...")
-    info_needed = data['checkInViewReservationPage']['_links']['checkIn']
+    info_needed = data['_links']['checkIn']
     url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-    r = requests.post(url, headers=headers, json=info_needed['body'])
-    body = r.json()
+    while True:
+        print("Attempting check-in...")
+        r = requests.post(url, headers=headers, json=info_needed['body'])
+        body = r.json()
 
-    if 'httpStatusCode' in body and body['httpStatusCode'] == 'FORBIDDEN':
-        attempts += 1
-        print(body['message'])
-        if attempts > max_attemps:
-            print("Max number of attempts exceeded, killing self")
-            success = True
-        else:
+        if 'httpStatusCode' in body and body['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
+            attempts += 1
+            print(body['message'])
+            if attempts > MAX_ATTEMPTS:
+                sys.exit("Max number of attempts exceeded, killing self")
             print("Attempt {}, waiting {} seconds before retrying...".format(attempts, checkin_interval_seconds))
             time.sleep(checkin_interval_seconds)
-    else:
-        # Spit out info about boarding number
-        for flight in body['checkInConfirmationPage']['flights']:
-            for doc in flight['passengers']:
-                print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
-        success = True
+        else:
+            # Spit out info about boarding number
+            for flight in body['checkInConfirmationPage']['flights']:
+                for doc in flight['passengers']:
+                    print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
+            # clean exit
+            sys.exit(0)
+    # end checkin method
+
+def schedule_checkin(flight_time, number, first, last):
+    checkin_time = flight_time - timedelta(days=1)
+    current_time = datetime.now(pytz.utc).astimezone(get_localzone())
+    # check to see if we need to sleep until 24 hours before flight
+    if checkin_time > current_time:
+        # calculate duration to sleep
+        delta = (checkin_time - current_time).total_seconds() - checkin_early_seconds
+        # pretty print our wait time
+        m, s = divmod(delta, 60)
+        h, m = divmod(m, 60)
+        print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
+        time.sleep(delta)
+    checkin(number, first, last)
+
+if __name__ == '__main__':
+    # work work
+    body = lookup_existing_reservation(reservation_number, first_name, last_name)
+
+    # setup a geocoder
+    # needed since Southwest no longer includes TZ information in reservations
+    g = geocoders.GoogleV3()
+
+    # Get our local current time
+    now = datetime.now(pytz.utc).astimezone(get_localzone())
+    tomorrow = now + timedelta(days=1)
+    date = now
+
+    # find the next departure time
+    for leg in body['bounds']:
+        # calculate departure for this leg
+        airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
+        takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
+        date = datetime.strptime(takeoff, '%Y-%m-%d %H:%M').replace(tzinfo=g.timezone(g.geocode(airport).point))
+        if date > now:
+            # found a flight for checkin!
+            print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
+            schedule_checkin(date, reservation_number, first_name, last_name)
