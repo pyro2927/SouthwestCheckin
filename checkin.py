@@ -33,10 +33,6 @@ def lookup_existing_reservation(number, first, last):
 def get_checkin_data(number, first, last):
     url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, reservation_number, first_name, last_name)
     r = requests.get(url, headers=headers)
-    # if there is an error, die here
-    if 'httpStatusCode' in body and body['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST']:
-        print(body['message'])
-        sys.exit()
     return r.json()
 
 # work work work
@@ -70,16 +66,27 @@ if date > tomorrow:
     print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
     time.sleep(delta)
 
-# get checkin data from first api call
-data = get_checkin_data(reservation_number, first_name, last_name)
-info_needed = data['checkInViewReservationPage']['_links']['checkIn']
-url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-
 success = False 
 attempts = 0
+# You might ask yourself, "Why the hell does this exist?"
+# Basically, there sometimes appears a "hiccup" in Southwest where things
+# aren't exactly available 24-hours before, so we try a few times
+
+while not success:
+    # get checkin data from first api call
+    data = get_checkin_data(reservation_number, first_name, last_name)
+    if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST']:
+        # if there is an error, try again
+        print(data['message'])
+        time.sleep(checkin_interval_seconds)
+    success = True
+
+success = False 
 
 while not success:
     print("Attempting check-in...")
+    info_needed = data['checkInViewReservationPage']['_links']['checkIn']
+    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
     r = requests.post(url, headers=headers, json=info_needed['body'])
     body = r.json()
 
