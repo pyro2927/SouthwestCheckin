@@ -46,13 +46,12 @@ def get_checkin_data(number, first, last):
     return r.json()['checkInViewReservationPage']
 
 def checkin(number, first, last):
-    success = False
     attempts = 0
     data = {}
     # You might ask yourself, "Why the hell does this exist?"
     # Basically, there sometimes appears a "hiccup" in Southwest where things
     # aren't exactly available 24-hours before, so we try a few times
-    while not success:
+    while True:
         # get checkin data from first api call
         data = get_checkin_data(number, first, last)
         if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
@@ -62,7 +61,7 @@ def checkin(number, first, last):
                 sys.exit("Unable to get checkin data, killing self")
             time.sleep(CHECKIN_INTERVAL_SECONDS)
             continue
-        success = True
+        break
 
     info_needed = data['_links']['checkIn']
     url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
