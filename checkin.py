@@ -83,9 +83,7 @@ def checkin(number, first, last):
             for flight in body['checkInConfirmationPage']['flights']:
                 for doc in flight['passengers']:
                     print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
-            # clean exit
-            sys.exit(0)
-    # end checkin method
+            break
 
 def schedule_checkin(flight_time, number, first, last):
     checkin_time = flight_time - timedelta(days=1)
