@@ -105,7 +105,9 @@ def auto_checkin(reservation_number, first_name, last_name):
         # calculate departure for this leg
         airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
         takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
-        date = datetime.strptime(takeoff, '%Y-%m-%d %H:%M').replace(tzinfo=g.timezone(g.geocode(airport).point))
+        point = g.geocode(airport).point
+        airport_tz = g.timezone(point)
+        date = airport_tz.localize(datetime.strptime(takeoff, '%Y-%m-%d %H:%M'))
         if date > now:
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
