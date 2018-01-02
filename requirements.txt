@@ -1,7 +1,9 @@
 datetime
 docopts
 geopy
+pytest
 python-dateutil
 pytz
 requests
+requests_mock
 tzlocal

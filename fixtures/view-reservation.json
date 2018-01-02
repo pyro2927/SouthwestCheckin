@@ -1,0 +1,114 @@
+{
+    "viewReservationViewPage": {
+        "_links": {
+            "cancel": null,
+            "change": null,
+            "checkIn": null,
+            "checkInSessionToken": null,
+            "passportEmergencyContacts": null,
+            "viewBoardingPass": null,
+            "viewBoardingPositions": null,
+            "viewStandbyList": null
+        },
+        "_v1_infoNeededToAddCompanion": null,
+        "_v1_infoNeededToCancel": {
+            "href": "/v1/mobile/reservations/record-locator/XXXX",
+            "method": "GET",
+            "query": {
+                "action": "CANCEL",
+                "first-name": "John",
+                "last-name": "Smith"
+            }
+        },
+        "_v1_infoNeededToChange": {
+            "href": "/v1/mobile/reservations/record-locator/XXXX",
+            "method": "GET",
+            "query": {
+                "action": "CHANGE",
+                "first-name": "John",
+                "last-name": "Smith"
+            }
+        },
+        "bounds": [
+            {
+                "arrivalAirport": {
+                    "code": "LAX",
+                    "country": null,
+                    "name": "Los Angeles",
+                    "state": "CA"
+                },
+                "arrivalStatus": null,
+                "arrivalStatusType": null,
+                "arrivalTime": "15:10",
+                "boundType": "DEPARTING",
+                "departureAirport": {
+                    "code": "SFO",
+                    "country": null,
+                    "name": "San Francisco",
+                    "state": "CA"
+                },
+                "departureDate": "2018-01-01",
+                "departureStatus": null,
+                "departureStatusType": null,
+                "departureTime": "13:45",
+                "fareType": "Companion",
+                "flights": [
+                    {
+                        "number": "1234",
+                        "wifiOnBoard": true
+                    }
+                ],
+                "isNextDayArrival": false,
+                "passengerTypeCounts": {
+                    "adult": 1,
+                    "senior": 0
+                },
+                "stops": [],
+                "travelTime": "1h 25m"
+            }
+        ],
+        "checkInIneligibilityReason": null,
+        "companion": null,
+        "confirmationNumber": "XXXX",
+        "dates": {
+            "first": "2018-01-01",
+            "second": null
+        },
+        "destinationAirport": {
+            "code": "LAX",
+            "country": null,
+            "name": "Los Angeles",
+            "state": "CA"
+        },
+        "destinationDescription": "Los Angeles",
+        "hasAnyCancelledFlights": false,
+        "hasUnaccompaniedMinor": false,
+        "isCheckInEligible": false,
+        "isCheckedIn": false,
+        "isDynamicWaiver": false,
+        "isInternational": false,
+        "isNonRevPnr": false,
+        "originAirport": {
+            "code": "SFO",
+            "country": null,
+            "name": "San Francisco",
+            "state": "CA"
+        },
+        "pageHeader": "SFO - LAX",
+        "passengers": [
+            {
+                "accountNumber": "111111111",
+                "checkInIneligibilityReason": null,
+                "hasAnyEarlyBird": false,
+                "hasCompletePassportInfo": false,
+                "isCheckInEligible": false,
+                "isCheckedIn": false,
+                "isUnaccompaniedMinor": false,
+                "name": "John Smith",
+                "passengerReference": "2"
+            }
+        ],
+        "shouldShowAddEarlyBirdButton": false,
+        "standbyFlight": null
+    }
+}

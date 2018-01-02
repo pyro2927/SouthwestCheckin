@@ -1,0 +1,64 @@
+{
+    "checkInSessionToken": "",
+    "checkInViewReservationPage": {
+        "_links": {
+            "checkIn": {
+                "body": {
+                    "checkInSessionToken": "",
+                    "firstName": "John",
+                    "lastName": "Smith",
+                    "recordLocator": "XXXX"
+                },
+                "href": "/v1/mobile-air-operations/page/check-in",
+                "method": "POST"
+            },
+            "travelDocuments": null
+        },
+        "_v1_infoNeededToCheckin": {
+            "body": {
+                "names": [
+                    {
+                        "firstName": "JOHN",
+                        "lastName": "SMITH"
+                    }
+                ]
+            },
+            "href": "/v1/mobile/reservations/record-locator/XXXX/boarding-passes",
+            "method": "POST"
+        },
+        "cards": [
+            {
+                "arrivalAirport": "LAX",
+                "arrivalTime": "15:10",
+                "dates": {
+                    "first": "2018-01-01",
+                    "second": null
+                },
+                "departureAirport": "SFO",
+                "departureDate": "2018-01-01",
+                "departureTime": "13:45",
+                "destinationDescription": "Los Angeles",
+                "flights": [
+                    {
+                        "departureDate": "Jan 01",
+                        "destinationAirportCode": "LAX",
+                        "destinationStationName": "Los Angeles",
+                        "flightNumber": "1234",
+                        "hasWifi": true,
+                        "originAirportCode": "SFO"
+                    }
+                ],
+                "hazmatCheckInDisclaimer": "By tapping 'Check in' you acknowledge that you understand the hazardous materials restrictions and penalties.",
+                "travelTime": "1h 25m"
+            }
+        ],
+        "hazmatText": "Federal law forbids the carriage of hazardous materials such as aerosols, fireworks, lithium batteries and flammable liquids aboard the aircraft in your checked or carryon baggage. E-cigarettes are not permitted in checked baggage and must be transported in carryon baggage only.",
+        "pnr": {
+            "confirmationNumber": "XXXX",
+            "passengers": [
+                "John Smith"
+            ]
+        }
+    },
+    "prefillPassengerAPISDocuments": null
+}

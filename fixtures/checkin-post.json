@@ -1,0 +1,45 @@
+{
+    "checkInConfirmationPage": {
+        "_links": {
+            "boardingPasses": {
+                "body": {
+                    "checkInSessionToken": "XXXX",
+                    "firstName": "JOHN",
+                    "lastName": "SMITH",
+                    "recordLocator": "XXXX"
+                },
+                "href": "/v1/mobile-air-operations/page/check-in/view-boarding-pass",
+                "method": "POST"
+            }
+        },
+        "_v1_infoNeededToViewBoardingPasses": {
+            "href": "/v1/mobile/record-locator/XXXX/mobile-boarding-passes",
+            "method": "GET",
+            "query": {
+                "first-name": "JOHN",
+                "last-name": "SMITH"
+            }
+        },
+        "flights": [
+            {
+                "boundIndex": 0,
+                "flightNumber": "1234",
+                "gate": null,
+                "hasWifi": true,
+                "passengers": [
+                    {
+                        "boardingGroup": "A",
+                        "boardingPosition": "31",
+                        "checkedIn": true,
+                        "confirmationNumber": "XXXX",
+                        "hasPrecheck": true,
+                        "mobileBoardingPassEligible": true,
+                        "mobileBoardingPassIneligibilityErrorCode": "",
+                        "name": "John Smith"
+                    }
+                ],
+                "travelTime": "1h 25m"
+            }
+        ]
+    }
+}
