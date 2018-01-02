@@ -1,4 +1,6 @@
 datetime
+docopts
+geopy
 python-dateutil
 pytz
 requests
