@@ -23,6 +23,7 @@ import pytz
 import requests
 import sys
 import time
+import json
 
 API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
 USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
@@ -92,10 +93,6 @@ def schedule_checkin(flight_time, number, first, last):
 def auto_checkin(reservation_number, first_name, last_name):
     body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
-    # setup a geocoder
-    # needed since Southwest no longer includes TZ information in reservations
-    g = geocoders.GoogleV3()
-
     # Get our local current time
     now = datetime.now(pytz.utc).astimezone(get_localzone())
     tomorrow = now + timedelta(days=1)
@@ -105,8 +102,14 @@ def auto_checkin(reservation_number, first_name, last_name):
         # calculate departure for this leg
         airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
         takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
-        point = g.geocode(airport).point
-        airport_tz = g.timezone(point)
+        tzrequest = {'iata': leg['departureAirport']['code'],
+                     'country': 'ALL',
+                     'db': 'airports',
+                     'iatafilter': 'true',
+                     'action': 'SEARCH',
+                     'offset': '0'}
+        tzresult = requests.post("https://openflights.org/php/apsearch.php", tzrequest)
+        airport_tz = pytz.timezone(json.loads(tzresult.text)['airports'][0]['tz_id'])
         date = airport_tz.localize(datetime.strptime(takeoff, '%Y-%m-%d %H:%M'))
         if date > now:
             # found a flight for checkin!
