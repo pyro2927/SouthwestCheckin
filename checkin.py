@@ -2,13 +2,15 @@
 """Southwest Checkin.
 
 Usage:
-  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [-v | --verbose]
+  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [--email=<email_addr> | --mobile=<phone_num>] [-v | --verbose]
   checkin.py (-h | --help)
   checkin.py --version
 
 Options:
   -h --help     Show this screen.
   -v --verbose  Show debugging information.
+  --email=<email_addr>  Email address where notification will be sent to.
+  --mobile=<phone_num>  Phone number where text notification will be sent to.
   --version     Show version.
 
 """
@@ -39,21 +41,25 @@ headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', '
 # Basically, there sometimes appears a "hiccup" in Southwest where things
 # aren't exactly available 24-hours before, so we try a few times
 def safe_request(url, body=None):
-    attempts = 0
-    while True:
-        if body is not None:
-            r = requests.post(url, headers=headers, json=body)
-        else:
-            r = requests.get(url, headers=headers)
-        data = r.json()
-        if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
-            attempts += 1
-            print(data['message'])
-            if attempts > MAX_ATTEMPTS:
-                sys.exit("Unable to get data, killing self")
-            time.sleep(CHECKIN_INTERVAL_SECONDS)
-            continue
-        return data
+    try:
+        attempts = 0
+        while True:
+            if body is not None:
+                r = requests.post(url, headers=headers, json=body)
+            else:
+                r = requests.get(url, headers=headers)
+            data = r.json()
+            if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
+                attempts += 1
+                print(data['message'])
+                if attempts > MAX_ATTEMPTS:
+                    sys.exit("Unable to get data, killing self")
+                time.sleep(CHECKIN_INTERVAL_SECONDS)
+                continue
+            return data
+    except ValueError:
+        # Ignore responses with no json data in body
+        pass
 
 def lookup_existing_reservation(number, first, last):
     # Find our existing record
@@ -73,7 +79,22 @@ def checkin(number, first, last):
     print("Attempting check-in...")
     return safe_request(url, info_needed['body'])['checkInConfirmationPage']
 
-def schedule_checkin(flight_time, number, first, last):
+def send_notification(checkindata, emailaddr=None, mobilenum=None):
+    info_needed = checkindata['_links']['boardingPasses']
+    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+    mbpdata = safe_request(url, info_needed['body'])
+    info_needed = mbpdata['checkInViewBoardingPassPage']['_links']
+    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+    if emailaddr:
+        info_needed['body']['mediaType'] = 'EMAIL'
+        info_needed['body']['emailAddress'] = emailaddr
+    if mobilenum:
+        info_needed['body']['mediaType'] = 'SMS'
+        info_needed['body']['phoneNumber'] = mobilenum
+    print("Attempting to send boarding pass...")
+    safe_request(url, info_needed['body'])
+
+def schedule_checkin(flight_time, number, first, last, email, mobile):
     checkin_time = flight_time - timedelta(days=1)
     current_time = datetime.now(pytz.utc).astimezone(get_localzone())
     # check to see if we need to sleep until 24 hours before flight
@@ -89,8 +110,13 @@ def schedule_checkin(flight_time, number, first, last):
     for flight in data['flights']:
         for doc in flight['passengers']:
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
+    if email:
+        send_notification(data, emailaddr=email)
+    elif mobile:
+        send_notification(data, mobilenum=mobile)
 
-def auto_checkin(reservation_number, first_name, last_name):
+
+def auto_checkin(reservation_number, first_name, last_name, email, mobile):
     body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
     # Get our local current time
@@ -114,7 +140,7 @@ def auto_checkin(reservation_number, first_name, last_name):
         if date > now:
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
-            schedule_checkin(date, reservation_number, first_name, last_name)
+            schedule_checkin(date, reservation_number, first_name, last_name, email, mobile)
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Southwest Checkin 0.2')
@@ -123,5 +149,7 @@ if __name__ == '__main__':
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
     last_name = arguments['LAST_NAME']
+    email = arguments['--email']
+    mobile = arguments['--mobile']
 
-    auto_checkin(reservation_number, first_name, last_name)
+    auto_checkin(reservation_number, first_name, last_name, email, mobile)
