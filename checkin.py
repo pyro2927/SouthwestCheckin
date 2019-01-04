@@ -18,7 +18,6 @@ from datetime import datetime
 from datetime import timedelta
 from dateutil.parser import parse
 from docopt import docopt
-from geopy import geocoders
 from math import trunc
 from tzlocal import get_localzone
 import pytz
