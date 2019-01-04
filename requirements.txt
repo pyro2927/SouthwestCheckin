@@ -1,6 +1,5 @@
 datetime
 docopts
-geopy
 pytest
 python-dateutil
 pytz
