@@ -122,6 +122,8 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
     now = datetime.now(pytz.utc).astimezone(get_localzone())
     tomorrow = now + timedelta(days=1)
 
+    threads = []
+
     # find all eligible legs for checkin
     for leg in body['bounds']:
         # calculate departure for this leg
@@ -139,7 +141,12 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
         if date > now:
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
-            schedule_checkin(date, reservation_number, first_name, last_name, email, mobile)
+            # Checkin with a thread
+            threads.push(threading.Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, email, mobile)))
+
+    # cleanup threads
+    for t in threads:
+        t.join()
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Southwest Checkin 0.2')
