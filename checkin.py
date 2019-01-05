@@ -115,7 +115,7 @@ def schedule_checkin(flight_time, number, first, last, email, mobile):
         send_notification(data, mobilenum=mobile)
 
 
-def auto_checkin(reservation_number, first_name, last_name, email, mobile):
+def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=None):
     body = lookup_existing_reservation(reservation_number, first_name, last_name)
 
     # Get our local current time
