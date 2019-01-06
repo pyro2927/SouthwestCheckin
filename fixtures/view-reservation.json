@@ -47,10 +47,10 @@
                     "name": "San Francisco",
                     "state": "CA"
                 },
-                "departureDate": "2018-01-01",
+                "departureDate": "DATE_HERE",
                 "departureStatus": null,
                 "departureStatusType": null,
-                "departureTime": "13:45",
+                "departureTime": "TIME_HERE",
                 "fareType": "Companion",
                 "flights": [
                     {
@@ -71,7 +71,7 @@
         "companion": null,
         "confirmationNumber": "XXXX",
         "dates": {
-            "first": "2018-01-01",
+            "first": "2218-01-01",
             "second": null
         },
         "destinationAirport": {

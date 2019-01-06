@@ -31,11 +31,11 @@
                 "arrivalAirport": "LAX",
                 "arrivalTime": "15:10",
                 "dates": {
-                    "first": "2018-01-01",
+                    "first": "2218-01-01",
                     "second": null
                 },
                 "departureAirport": "SFO",
-                "departureDate": "2018-01-01",
+                "departureDate": "2218-01-01",
                 "departureTime": "13:45",
                 "destinationDescription": "Los Angeles",
                 "flights": [
