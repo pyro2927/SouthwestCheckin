@@ -19,12 +19,13 @@ from datetime import timedelta
 from dateutil.parser import parse
 from docopt import docopt
 from math import trunc
+from threading import Thread
 from tzlocal import get_localzone
+import json
 import pytz
 import requests
 import sys
 import time
-import json
 
 API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
 USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
@@ -122,6 +123,8 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
     now = datetime.now(pytz.utc).astimezone(get_localzone())
     tomorrow = now + timedelta(days=1)
 
+    threads = []
+
     # find all eligible legs for checkin
     for leg in body['bounds']:
         # calculate departure for this leg
@@ -139,7 +142,14 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
         if date > now:
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
-            schedule_checkin(date, reservation_number, first_name, last_name, email, mobile)
+            # Checkin with a thread
+            t = Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, email, mobile))
+            t.start()
+            threads.append(t)
+
+    # cleanup threads
+    for t in threads:
+        t.join()
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Southwest Checkin 0.2')
