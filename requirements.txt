@@ -1,6 +1,7 @@
 datetime
 docopts
 pytest
+pytest-mock
 python-dateutil
 pytz
 requests
