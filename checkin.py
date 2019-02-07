@@ -40,7 +40,7 @@ headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', '
 # You might ask yourself, "Why the hell does this exist?"
 # Basically, there sometimes appears a "hiccup" in Southwest where things
 # aren't exactly available 24-hours before, so we try a few times
-def safe_request(url, body=None):
+def safe_request(url, body=None, retry=False):
     try:
         attempts = 0
         while True:
@@ -52,7 +52,7 @@ def safe_request(url, body=None):
             if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
                 attempts += 1
                 print(data['message'])
-                if attempts > MAX_ATTEMPTS:
+                if not retry or attempts > MAX_ATTEMPTS:
                     sys.exit("Unable to get data, killing self")
                 time.sleep(CHECKIN_INTERVAL_SECONDS)
                 continue
@@ -77,7 +77,7 @@ def checkin(number, first, last):
     info_needed = data['_links']['checkIn']
     url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
     print("Attempting check-in...")
-    return safe_request(url, info_needed['body'])['checkInConfirmationPage']
+    return safe_request(url, info_needed['body'], retry=True)['checkInConfirmationPage']
 
 def send_notification(checkindata, emailaddr=None, mobilenum=None):
     info_needed = checkindata['_links']['boardingPasses']
