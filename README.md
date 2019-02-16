@@ -1,6 +1,8 @@
 # SW Checkin
 
 [![Build Status](https://travis-ci.org/pyro2927/SouthwestCheckin.svg?branch=master)](https://travis-ci.org/pyro2927/SouthwestCheckin)
+[![Maintainability](https://api.codeclimate.com/v1/badges/aa1c955dfcba58a7352f/maintainability)](https://codeclimate.com/github/pyro2927/SouthwestCheckin/maintainability)
+[![Known Vulnerabilities](https://snyk.io/test/github/pyro2927/SouthwestCheckin/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/pyro2927/SouthwestCheckin?targetFile=requirements.txt)
 
 ![](http://www.southwest-heart.com/img/heart/heart_1.jpg)
 
