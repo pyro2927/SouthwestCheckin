@@ -5,3 +5,4 @@ python:
   - "3.7.1"
 script:
   - pytest
+  - pycodestyle checkin.py --show-source --ignore=E501

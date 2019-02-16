@@ -2,6 +2,7 @@ import checkin
 import json
 import pytest
 import requests
+import southwest
 from datetime import datetime, timedelta
 from pytz import timezone, utc
 from tzlocal import get_localzone
@@ -45,16 +46,16 @@ def test_notifications(requests_mock, mocker):
     requests_mock.register_uri('POST', '/api/mobile-air-operations/v1/mobile-air-operations/page/check-in', text=data)
     data = json.loads(data)
     requests_mock.register_uri('POST', '/php/apsearch.php', text=template_time('fixtures/openflights.json'))
-    mocked_checkin = mocker.patch('checkin.send_notification')
+    mocked_checkin = mocker.patch('southwest.send_notification')
     t = datetime.now(utc).astimezone(get_localzone()) + timedelta(minutes=5)
 
     try:
         checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', None, None)
-        checkin.send_notification.assert_not_called()
+        southwest.send_notification.assert_not_called()
         checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', 'test@example.com', None)
-        checkin.send_notification.assert_called_once_with(data['checkInConfirmationPage'], emailaddr='test@example.com')
-        checkin.send_notification.reset_mock()
+        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], emailaddr='test@example.com')
+        southwest.send_notification.reset_mock()
         checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', None, '1234567890')
-        checkin.send_notification.assert_called_once_with(data['checkInConfirmationPage'], mobilenum='1234567890')
+        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], mobilenum='1234567890')
     except:
         pytest.fail("Error checking in")
