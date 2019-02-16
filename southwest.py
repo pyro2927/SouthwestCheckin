@@ -10,58 +10,68 @@ MAX_ATTEMPTS = 40
 # Pulled from proxying the Southwest iOS App
 headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
 
-# You might ask yourself, "Why the hell does this exist?"
-# Basically, there sometimes appears a "hiccup" in Southwest where things
-# aren't exactly available 24-hours before, so we try a few times
-def safe_request(url, body=None):
-    try:
-        attempts = 0
-        while True:
-            if body is not None:
-                r = requests.post(url, headers=headers, json=body)
-            else:
-                r = requests.get(url, headers=headers)
-            data = r.json()
-            if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
-                attempts += 1
-                print(data['message'])
-                if attempts > MAX_ATTEMPTS:
-                    sys.exit("Unable to get data, killing self")
-                time.sleep(CHECKIN_INTERVAL_SECONDS)
-                continue
-            return data
-    except ValueError:
-        # Ignore responses with no json data in body
-        pass
 
-def lookup_existing_reservation(number, first, last):
-    # Find our existing record
-    url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, number, first, last)
-    data = safe_request(url)
-    return data['viewReservationViewPage']
+class Reservation():
 
-def get_checkin_data(number, first, last):
-    url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, number, first, last)
-    data = safe_request(url)
-    return data['checkInViewReservationPage']
+    def __init__(self, number, first, last, notifications=[]):
+        self.number = number
+        self.first = first
+        self.last = last
+        self.notifications = []
 
-def checkin(number, first, last):
-    data = get_checkin_data(number, first, last)
-    info_needed = data['_links']['checkIn']
-    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-    print("Attempting check-in...")
-    return safe_request(url, info_needed['body'])['checkInConfirmationPage']
+    # You might ask yourself, "Why the hell does this exist?"
+    # Basically, there sometimes appears a "hiccup" in Southwest where things
+    # aren't exactly available 24-hours before, so we try a few times
+    def safe_request(self, url, body=None):
+        try:
+            attempts = 0
+            while True:
+                if body is not None:
+                    r = requests.post(url, headers=headers, json=body)
+                else:
+                    r = requests.get(url, headers=headers)
+                data = r.json()
+                if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
+                    attempts += 1
+                    print(data['message'])
+                    if attempts > MAX_ATTEMPTS:
+                        sys.exit("Unable to get data, killing self")
+                    time.sleep(CHECKIN_INTERVAL_SECONDS)
+                    continue
+                return data
+        except ValueError:
+            # Ignore responses with no json data in body
+            pass
 
-def send_notification(checkindata, notify):
-    if len(notify) < 1:
-        return
-    info_needed = checkindata['_links']['boardingPasses']
-    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-    mbpdata = safe_request(url, info_needed['body'])
-    info_needed = mbpdata['checkInViewBoardingPassPage']['_links']
-    url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-    print("Attempting to send boarding pass...")
-    body = info_needed['body']
-    for n in notify:
-        body.update(n)
-        safe_request(url, body)
+    def lookup_existing_reservation(self):
+        # Find our existing record
+        url = "{}mobile-misc/v1/mobile-misc/page/view-reservation/{}?first-name={}&last-name={}".format(BASE_URL, self.number, self.first, self.last)
+        data = self.safe_request(url)
+        return data['viewReservationViewPage']
+
+    def get_checkin_data(self):
+        url = "{}mobile-air-operations/v1/mobile-air-operations/page/check-in/{}?first-name={}&last-name={}".format(BASE_URL, self.number, self.first, self.last)
+        data = self.safe_request(url)
+        return data['checkInViewReservationPage']
+
+    def checkin(self):
+        data = self.get_checkin_data()
+        info_needed = data['_links']['checkIn']
+        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+        print("Attempting check-in...")
+        confirmation = self.safe_request(url, info_needed['body'])['checkInConfirmationPage']
+        if len(self.notifications) > 0:
+            self.send_notification(confirmation)
+        return confirmation
+
+    def send_notification(self, checkindata):
+        info_needed = checkindata['_links']['boardingPasses']
+        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+        mbpdata = self.safe_request(url, info_needed['body'])
+        info_needed = mbpdata['checkInViewBoardingPassPage']['_links']
+        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+        print("Attempting to send boarding pass...")
+        body = info_needed['body']
+        for n in self.notifications:
+            body.update(n)
+            self.safe_request(url, body)

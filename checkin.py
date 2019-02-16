@@ -20,17 +20,17 @@ from dateutil.parser import parse
 from docopt import docopt
 from math import trunc
 from pytz import utc
+from southwest import Reservation
 from threading import Thread
 from tzlocal import get_localzone
 import openflights
-import southwest
 import sys
 import time
 
 CHECKIN_EARLY_SECONDS = 5
 
 
-def schedule_checkin(flight_time, number, first, last, notify=[]):
+def schedule_checkin(flight_time, reservation):
     checkin_time = flight_time - timedelta(days=1)
     current_time = datetime.now(utc).astimezone(get_localzone())
     # check to see if we need to sleep until 24 hours before flight
@@ -42,16 +42,15 @@ def schedule_checkin(flight_time, number, first, last, notify=[]):
         h, m = divmod(m, 60)
         print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
         time.sleep(delta)
-    data = southwest.checkin(number, first, last)
+    data = reservation.checkin()
     for flight in data['flights']:
         for doc in flight['passengers']:
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
-    if len(notify) > 0:
-        southwest.send_notification(data, notify)
 
 
 def auto_checkin(reservation_number, first_name, last_name, notify=[]):
-    body = southwest.lookup_existing_reservation(reservation_number, first_name, last_name)
+    r = Reservation(reservation_number, first_name, last_name, notify)
+    body = r.lookup_existing_reservation()
 
     # Get our local current time
     now = datetime.now(utc).astimezone(get_localzone())
@@ -70,7 +69,7 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
             # Checkin with a thread
-            t = Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, notify))
+            t = Thread(target=schedule_checkin, args=(date, r))
             t.daemon = True
             t.start()
             threads.append(t)

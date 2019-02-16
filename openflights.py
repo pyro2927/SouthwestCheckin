@@ -2,6 +2,7 @@ import requests
 import json
 import pytz
 
+
 def timezone_for_airport(airport_code):
     tzrequest = {'iata': airport_code,
                  'country': 'ALL',
