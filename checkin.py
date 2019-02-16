@@ -46,7 +46,8 @@ def schedule_checkin(flight_time, number, first, last, notify=[]):
     for flight in data['flights']:
         for doc in flight['passengers']:
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
-    southwest.send_notification(data, notify)
+    if len(notify) > 0:
+        southwest.send_notification(data, notify)
 
 
 def auto_checkin(reservation_number, first_name, last_name, notify=[]):

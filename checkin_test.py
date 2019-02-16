@@ -3,6 +3,7 @@ import json
 import pytest
 import requests
 import southwest
+import vcr
 from datetime import datetime, timedelta
 from pytz import timezone, utc
 from tzlocal import get_localzone
@@ -20,7 +21,7 @@ def test_checkin(requests_mock):
     requests_mock.register_uri('POST', '/api/mobile-air-operations/v1/mobile-air-operations/page/check-in', text=template_time('fixtures/checkin-post.json'))
     requests_mock.register_uri('POST', '/php/apsearch.php', text=template_time('fixtures/openflights.json'))
     try:
-        checkin.auto_checkin('XXXX', 'John', 'Smith', None, None)
+        checkin.auto_checkin('XXXX', 'John', 'Smith')
     except:
         pytest.fail("Error checking in")
 
@@ -29,6 +30,7 @@ def test_timezone_localization():
     date = tz.localize(datetime.strptime('2018-01-01 13:00', '%Y-%m-%d %H:%M'))
     assert date.strftime('%z') == '-0800'
 
+@vcr.use_cassette()
 def test_openflights_api():
     tzrequest = {'iata': 'LAX',
                  'country': 'ALL',
@@ -50,12 +52,14 @@ def test_notifications(requests_mock, mocker):
     t = datetime.now(utc).astimezone(get_localzone()) + timedelta(minutes=5)
 
     try:
-        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', None, None)
+        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith')
         southwest.send_notification.assert_not_called()
-        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', 'test@example.com', None)
-        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], emailaddr='test@example.com')
+        email = [{'mediaType': 'EMAIL', 'emailAddress': 'test@example.com'}]
+        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', email)
+        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], email)
         southwest.send_notification.reset_mock()
-        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', None, '1234567890')
-        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], mobilenum='1234567890')
+        phone = [{'mediaType': 'SMS', 'phoneNumber': '1234567890'}]
+        checkin.schedule_checkin(t, 'XXXX', 'John', 'Smith', phone)
+        southwest.send_notification.assert_called_once_with(data['checkInConfirmationPage'], phone)
     except:
         pytest.fail("Error checking in")
