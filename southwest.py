@@ -52,17 +52,16 @@ def checkin(number, first, last):
     print("Attempting check-in...")
     return safe_request(url, info_needed['body'])['checkInConfirmationPage']
 
-def send_notification(checkindata, emailaddr=None, mobilenum=None):
+def send_notification(checkindata, notify):
+    if len(notify) < 1:
+        return
     info_needed = checkindata['_links']['boardingPasses']
     url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
     mbpdata = safe_request(url, info_needed['body'])
     info_needed = mbpdata['checkInViewBoardingPassPage']['_links']
     url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-    if emailaddr:
-        info_needed['body']['mediaType'] = 'EMAIL'
-        info_needed['body']['emailAddress'] = emailaddr
-    if mobilenum:
-        info_needed['body']['mediaType'] = 'SMS'
-        info_needed['body']['phoneNumber'] = mobilenum
     print("Attempting to send boarding pass...")
-    safe_request(url, info_needed['body'])
+    body = info_needed['body']
+    for n in notify:
+        body.update(n)
+        safe_request(url, body)

@@ -30,7 +30,7 @@ import time
 CHECKIN_EARLY_SECONDS = 5
 
 
-def schedule_checkin(flight_time, number, first, last, email, mobile):
+def schedule_checkin(flight_time, number, first, last, notify=[]):
     checkin_time = flight_time - timedelta(days=1)
     current_time = datetime.now(utc).astimezone(get_localzone())
     # check to see if we need to sleep until 24 hours before flight
@@ -46,13 +46,10 @@ def schedule_checkin(flight_time, number, first, last, email, mobile):
     for flight in data['flights']:
         for doc in flight['passengers']:
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
-    if email:
-        southwest.send_notification(data, emailaddr=email)
-    elif mobile:
-        southwest.send_notification(data, mobilenum=mobile)
+    southwest.send_notification(data, notify)
 
 
-def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=None):
+def auto_checkin(reservation_number, first_name, last_name, notify=[]):
     body = southwest.lookup_existing_reservation(reservation_number, first_name, last_name)
 
     # Get our local current time
@@ -72,7 +69,7 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
             # found a flight for checkin!
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
             # Checkin with a thread
-            t = Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, email, mobile))
+            t = Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, notify))
             t.daemon = True
             t.start()
             threads.append(t)
@@ -97,8 +94,15 @@ if __name__ == '__main__':
     email = arguments['--email']
     mobile = arguments['--mobile']
 
+    # build out notifications
+    notifications = []
+    if email is not None:
+        notifications.append({'mediaType': 'EMAIL', 'emailAddress': email})
+    if mobile is not None:
+        notifications.append({'mediaType': 'SMS', 'phoneNumber': mobile})
+
     try:
-        auto_checkin(reservation_number, first_name, last_name, email, mobile)
+        auto_checkin(reservation_number, first_name, last_name, notifications)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
         sys.exit()
