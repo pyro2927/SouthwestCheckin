@@ -144,12 +144,19 @@ def auto_checkin(reservation_number, first_name, last_name, email=None, mobile=N
             print("Flight information found, departing {} at {}".format(airport, date.strftime('%b %d %I:%M%p')))
             # Checkin with a thread
             t = Thread(target=schedule_checkin, args=(date, reservation_number, first_name, last_name, email, mobile))
+            t.daemon = True
             t.start()
             threads.append(t)
 
-    # cleanup threads
-    for t in threads:
-        t.join()
+    # cleanup threads while handling Ctrl+C
+    while True:
+        if len(threads) == 0:
+            break
+        for t in threads:
+            t.join(5)
+            if not t.isAlive():
+                threads.remove(t)
+                break
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Southwest Checkin 0.2')
@@ -161,4 +168,8 @@ if __name__ == '__main__':
     email = arguments['--email']
     mobile = arguments['--mobile']
 
-    auto_checkin(reservation_number, first_name, last_name, email, mobile)
+    try:
+        auto_checkin(reservation_number, first_name, last_name, email, mobile)
+    except KeyboardInterrupt:
+        print("Ctrl+C detected, canceling checkin")
+        sys.exit()
