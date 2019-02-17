@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/pyro2927/SouthwestCheckin.svg?branch=master)](https://travis-ci.org/pyro2927/SouthwestCheckin)
 [![Maintainability](https://api.codeclimate.com/v1/badges/aa1c955dfcba58a7352f/maintainability)](https://codeclimate.com/github/pyro2927/SouthwestCheckin/maintainability)
 [![Known Vulnerabilities](https://snyk.io/test/github/pyro2927/SouthwestCheckin/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/pyro2927/SouthwestCheckin?targetFile=requirements.txt)
+![Docker Build Status](https://img.shields.io/docker/automated/pyro2927/southwestcheckin.svg?style=flat)
 
 ![](http://www.southwest-heart.com/img/heart/heart_1.jpg)
 
@@ -42,6 +43,5 @@ $ python ./checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
 #### Usage
 
 ```bash
-$ sudo docker build -t swcheckin ./
-$ sudo docker run -ti swcheckin /tmp/checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
+$ sudo docker run -it pyro2927/southwestcheckin:latest CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
 ```
