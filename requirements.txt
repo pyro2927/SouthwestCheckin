@@ -1,7 +1,9 @@
+coverage
 datetime
 docopts
 pycodestyle
 pytest
+pytest-cov
 pytest-mock
 python-dateutil
 pytz
