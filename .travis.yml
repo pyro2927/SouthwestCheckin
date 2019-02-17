@@ -14,4 +14,5 @@ script:
   - pytest --cov=southwest --cov=checkin --cov=openflights
   - pycodestyle *.py --show-source --ignore=E501
 after_script:
+  - coverage xml
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
