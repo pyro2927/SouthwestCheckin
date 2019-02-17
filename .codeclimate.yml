@@ -2,3 +2,6 @@ version: '2'
 plugins:
   pep8:
     enabled: true
+    checks:
+      E501:
+        enabled: false
