@@ -4,18 +4,21 @@ import os
 
 # remove sensitive values from JSON response
 bad_fields = [
-    'recordLocator',
     'checkInSessionToken',
-    'name',
-    'firstName',
-    'lastName',
-    'passengers',
     'first-name',
-    'last-name'
+    'firstName',
+    'last-name',
+    'lastName',
+    'name',
+    'passengerInfo',
+    'passengers',
+    'recordLocator'
 ]
 
 
 def redact(obj):
+    if isinstance(obj, str):
+        return
     for k, v in list(obj.items()):
         if k in bad_fields:
             obj[k] = '[REDACTED]'
@@ -27,7 +30,10 @@ def redact(obj):
 
 
 def filter_payload(response):
-    string_body = response['body']['string'].decode('utf8')
+    s = response['body']['string']
+    if len(s) == 0:
+        return response
+    string_body = s.decode('utf8')
     body = json.loads(string_body)
     redact(body)
     response['body']['string'] = json.dumps(body).encode()
