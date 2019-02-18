@@ -48,5 +48,6 @@ def custom_vcr():
         path_transformer=VCR.ensure_suffix('.yml'),
         filter_query_parameters=bad_fields,
         before_record_response=filter_payload,
-        filter_post_data_parameters=bad_fields
+        filter_post_data_parameters=bad_fields,
+        match_on=['path', 'method']
     )
