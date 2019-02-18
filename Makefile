@@ -1,7 +1,11 @@
+all: init test lint
 init:
-    pip install -r requirements.txt
+	pip install -r requirements.txt
 
 test:
-    pytest --cov=southwest/ --cov=checkin
+	pytest --cov=southwest/ --cov=checkin
 
-.PHONY: init test
+lint:
+	pycodestyle */*.py --show-source --ignore=E501
+
+.PHONY: all

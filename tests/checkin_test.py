@@ -9,6 +9,7 @@ from tzlocal import get_localzone
 
 my_vcr = custom_vcr()
 
+
 @my_vcr.use_cassette()
 def test_checkin():
     r = southwest.Reservation('XXXXXX', 'John', 'Smith')
@@ -16,12 +17,6 @@ def test_checkin():
         r.checkin()
     except Exception:
         pytest.fail("Error checking in")
-
-
-def test_timezone_localization():
-    tz = timezone('America/Los_Angeles')
-    date = tz.localize(datetime.strptime('2018-01-01 13:00', '%Y-%m-%d %H:%M'))
-    assert date.strftime('%z') == '-0800'
 
 
 @my_vcr.use_cassette()

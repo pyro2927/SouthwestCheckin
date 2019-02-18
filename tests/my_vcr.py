@@ -14,6 +14,7 @@ bad_fields = [
     'last-name'
 ]
 
+
 def redact(obj):
     for k, v in list(obj.items()):
         if k in bad_fields:
@@ -24,12 +25,14 @@ def redact(obj):
         elif isinstance(v, dict):
             redact(v)
 
+
 def filter_payload(response):
     string_body = response['body']['string'].decode('utf8')
     body = json.loads(string_body)
     redact(body)
     response['body']['string'] = json.dumps(body).encode()
     return response
+
 
 def custom_vcr():
     dirname = os.path.dirname(__file__)
