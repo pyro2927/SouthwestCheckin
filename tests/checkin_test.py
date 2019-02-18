@@ -10,6 +10,7 @@ from tzlocal import get_localzone
 my_vcr = custom_vcr()
 r = southwest.Reservation('XXXXXX', 'John', 'Smith')
 
+
 @my_vcr.use_cassette()
 def test_reservation_lookup():
     print(r.notifications)
@@ -31,7 +32,7 @@ def test_notifications():
     phone = southwest.Notifications.Phone('1234567890')
     email = southwest.Notifications.Email('test@example.com')
     r.notifications = [phone, email]
-    #TODO: test firing these off
+    # TODO: test firing these off
 
 
 @my_vcr.use_cassette()
