@@ -17,7 +17,7 @@ bad_fields = [
 
 
 def redact(obj):
-    if isinstance(obj, str):
+    if isinstance(obj, ("".__class__, u"".__class__)):
         return
     for k, v in list(obj.items()):
         if k in bad_fields:
