@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      Host: [mobile.southwest.com]
+      User-Agent: [python-requests/2.21.0]
+      X-API-Key: [l7xxb3dcccc4a5674bada48fc6fcf0946bc8]
+      X-User-Experience-Id: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+    method: GET
+    uri: https://mobile.southwest.com/api/mobile-misc/v1/mobile-misc/page/view-reservation/XXXXXX
+  response:
+    body: {string: '{"viewReservationViewPage": {"dates": {"first": "2019-02-18",
+        "second": null}, "checkInIneligibilityReason": null, "destinationDescription":
+        "Los Angeles", "originAirport": {"name": "[REDACTED]", "state": "OR", "code":
+        "PDX", "country": null}, "destinationAirport": {"name": "[REDACTED]", "state":
+        "CA", "code": "LAX", "country": null}, "standbyFlight": null, "companion":
+        null, "passengers": "[REDACTED]", "confirmationNumber": "XXXXXX", "shouldShowAddEarlyBirdButton":
+        false, "bounds": [{"departureStatus": "ON TIME", "departureStatusType": "POSITIVE",
+        "arrivalStatus": "ON TIME", "arrivalStatusType": "POSITIVE", "flights": [{"number":
+        "1614", "wifiOnBoard": true}], "travelTime": "2h 20m", "departureDate": "2019-02-18",
+        "departureTime": "13:45", "departureAirport": {"name": "[REDACTED]", "state":
+        "OR", "code": "PDX", "country": null}, "arrivalTime": "16:05", "arrivalAirport":
+        {"name": "[REDACTED]", "state": "CA", "code": "LAX", "country": null}, "passengerTypeCounts":
+        {"adult": 1, "senior": 0}, "fareType": "Companion", "boundType": "DEPARTING",
+        "standbyFlight": null, "stops": [], "isNextDayArrival": false}], "pageHeader":
+        "PDX - LAX", "shareDetails": {"subject": "Southwest Flight 1614 Portland to
+        Los Angeles", "confirmationInfo": "Confirmation #: XXXXXX", "passengerInfo":
+        "[REDACTED]", "flightInfo": [{"header": "Departing Flight: Mon, Feb 18, 2019",
+        "flightInfo": "Flight #: 1614", "departureInfo": "Departs: 01:45 PM PDX",
+        "stops": null, "arrivalInfo": "Arrives: 04:05 PM LAX", "travelTime": "Travel
+        time: 2hr 20 mins"}]}, "hasAnyCancelledFlights": false, "isCheckInEligible":
+        true, "isCheckedIn": true, "isInternational": false, "isDynamicWaiver": false,
+        "isNonRevPnr": false, "_v1_infoNeededToChange": {"href": "/v1/mobile/reservations/record-locator/XXXXXX",
+        "method": "GET", "query": {"action": "CHANGE", "first-name": "[REDACTED]",
+        "last-name": "[REDACTED]"}}, "_v1_infoNeededToCancel": {"href": "/v1/mobile/reservations/record-locator/XXXXXX",
+        "method": "GET", "query": {"action": "CANCEL", "first-name": "[REDACTED]",
+        "last-name": "[REDACTED]"}}, "_v1_infoNeededToAddCompanion": null, "_links":
+        {"checkInSessionToken": "[REDACTED]", "earlyBird": null, "change": {"href":
+        "/v1/mobile-air-booking/page/flights/change/current/XXXXXX", "method": "GET",
+        "query": {"first-name": "[REDACTED]", "last-name": "[REDACTED]"}}, "cancel":
+        {"href": "/v1/mobile-air-booking/page/cancel-reservation/XXXXXX", "method":
+        "GET", "query": {"first-name": "[REDACTED]", "last-name": "[REDACTED]"}},
+        "viewStandbyList": null, "checkIn": null, "viewBoardingPass": {"href": "/v1/mobile-air-operations/page/check-in/view-boarding-pass",
+        "method": "POST", "body": {"firstName": "[REDACTED]", "lastName": "[REDACTED]",
+        "recordLocator": "[REDACTED]"}}, "viewBoardingPositions": null, "addCompanion":
+        null, "passportEmergencyContacts": null}, "hasUnaccompaniedMinor": false}}'}
+    headers:
+      Access-Control-Allow-Credentials: ['true']
+      Access-Control-Allow-Headers: ['origin, content-type, accept, authorization,
+          token, User-Agent, X-Forwarded-For, X-User-Experience-ID, X-Request-ID,
+          X-API-Key, X-Account-Number, X-Swa-Region, X-Channel-Id, X-Api-IDToken,
+          true-host']
+      Access-Control-Allow-Methods: ['GET, POST, PUT, DELETE, OPTIONS, HEAD']
+      Access-Control-Allow-Origin: ['']
+      Access-Control-Expose-Headers: ['X-User-Experience-ID, X-Request-ID']
+      Access-Control-Max-Age: ['1']
+      Cache-Control: ['max-age=0, no-cache, no-store']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      Date: ['Mon, 18 Feb 2019 07:24:47 GMT']
+      Expires: ['Mon, 18 Feb 2019 07:24:47 GMT']
+      Pragma: [no-cache]
+      Server: [Apache-Coyote/1.1]
+      Strict-Transport-Security: [max-age=60]
+      Vary: [Accept-Encoding]
+      X-Request-ID: [6JM3yBL0QIahYeZtLYc8QA]
+      X-User-Experience-ID: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+      content-length: ['8422']
+    status: {code: 200, message: OK}
+version: 1

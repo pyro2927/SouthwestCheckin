@@ -1,3 +1,4 @@
+from time import sleep
 import requests
 import sys
 
@@ -36,7 +37,7 @@ class Reservation():
                     print(data['message'])
                     if attempts > MAX_ATTEMPTS:
                         sys.exit("Unable to get data, killing self")
-                    time.sleep(CHECKIN_INTERVAL_SECONDS)
+                    sleep(CHECKIN_INTERVAL_SECONDS)
                     continue
                 return data
         except ValueError:
@@ -45,6 +46,8 @@ class Reservation():
 
     def load_json_page(self, url, body=None):
         data = self.safe_request(url, body)
+        if not data:
+            return
         for k, v in list(data.items()):
             if k.endswith("Page"):
                 return v
@@ -76,7 +79,7 @@ class Reservation():
         info_needed = mbpdata['_links']
         url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
         print("Attempting to send boarding pass...")
-        body = info_needed['body']
         for n in self.notifications:
+            body = info_needed['body'].copy()
             body.update(n)
             self.safe_request(url, body)

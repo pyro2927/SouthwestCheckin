@@ -11,26 +11,24 @@ interactions:
     method: POST
     uri: https://openflights.org/php/apsearch.php
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAA4WQT2vDMAzFv4rRaYM0jduU/Ln5ODbYYQwG2wgmcYchsYMtj7Wl331SyjZ62vE9
-        PUk/6QQRNaYIrczA7/fRILRFBpP+ghYkZKBtmH1ASryewOnJkP/go1Duw4wmijuHJjiN1js9CnVJ
-        U19v8XAdZdMnh4H9Z2fRDOKJti8Vq1FzXL2w6LUncX9RTLKSss7LomqaiqF4wnabN+VmV8iiIocW
-        fC4QjL3ZMfhsB46VdUkK7WSO3jH9qiY9RDoUFFeO3RJUkwm0+G1NyN0fMh5mbtK/h0WfQs/WYwrq
-        5zm8rks8x6VxXNR/v8rFDd13m4nrV5zfz9+w9U2RlQEAAA==
+    body: {string: '{"status": 1, "offset": 0, "max": "1", "airports": [{"name": "[REDACTED]",
+        "city": "Los Angeles", "country": "United States", "iata": "LAX", "icao":
+        "KLAX", "x": "-118.4079971", "y": "33.94250107", "elevation": "125", "apid":
+        "3484", "timezone": "-8", "dst": "A", "tz_id": "America/Los_Angeles", "type":
+        "airport", "source": "OurAirports", "ap_uid": null, "ap_name": "Los Angeles
+        International. (LAX), United States"}]}'}
     headers:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [Keep-Alive]
-      Content-Encoding: [gzip]
-      Content-Length: ['262']
       Content-Type: [text/html]
-      Date: ['Sat, 16 Feb 2019 22:42:03 GMT']
+      Date: ['Mon, 18 Feb 2019 07:24:50 GMT']
       Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
       Keep-Alive: ['timeout=5, max=100']
       Pragma: [no-cache]
       Server: [Apache/2.4.7 (Ubuntu)]
-      Set-Cookie: [PHPSESSID=g082si0ct41jj5gcp0a73p52u5; path=/]
+      Set-Cookie: [PHPSESSID=mpoesla4lf9h12d3hnp5fn6t24; path=/]
       Vary: [Accept-Encoding]
       X-Powered-By: [PHP/5.5.9-1ubuntu4.26]
+      content-length: ['405']
     status: {code: 200, message: OK}
 version: 1
