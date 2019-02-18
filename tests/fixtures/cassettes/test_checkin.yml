@@ -1,0 +1,107 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      Host: [mobile.southwest.com]
+      User-Agent: [python-requests/2.21.0]
+      X-API-Key: [l7xxb3dcccc4a5674bada48fc6fcf0946bc8]
+      X-User-Experience-Id: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+    method: GET
+    uri: https://mobile.southwest.com/api/mobile-air-operations/v1/mobile-air-operations/page/check-in/XXXXXX
+  response:
+    body: {string: '{"checkInSessionToken": "[REDACTED]", "checkInViewReservationPage":
+        {"pnr": {"confirmationNumber": "XXXXXX", "passengers": "[REDACTED]"}, "cards":
+        [{"dates": {"first": "2019-02-18", "second": null}, "destinationDescription":
+        "Los Angeles", "departureDate": "2019-02-18", "departureAirport": "PDX", "departureTime":
+        "13:45", "arrivalAirport": "LAX", "arrivalTime": "16:05", "hazmatCheckInDisclaimer":
+        "By tapping ''Check in'' you acknowledge that you understand the hazardous
+        materials restrictions and penalties.", "flights": [{"flightNumber": "1614",
+        "hasWifi": true, "originAirportCode": "PDX", "destinationAirportCode": "LAX",
+        "destinationStationName": "Los Angeles", "departureDate": "Feb 18", "departureGate":
+        null, "departureTime": "13:45"}], "travelTime": "2h 20m"}], "hazmatText":
+        "Federal law forbids the carriage of hazardous materials such as aerosols,
+        fireworks, lithium batteries and flammable liquids aboard the aircraft in
+        your checked or carryon baggage. E-cigarettes are not permitted in checked
+        baggage and must be transported in carryon baggage only.", "_v1_infoNeededToCheckin":
+        {"href": "/v1/mobile/reservations/record-locator/XXXXXX/boarding-passes",
+        "method": "POST", "body": {"names": [{"firstName": "[REDACTED]", "lastName":
+        "[REDACTED]"}]}}, "_links": {"checkIn": {"href": "/v1/mobile-air-operations/page/check-in",
+        "method": "POST", "body": {"recordLocator": "[REDACTED]", "checkInSessionToken":
+        "[REDACTED]", "firstName": "[REDACTED]", "lastName": "[REDACTED]"}}, "travelDocuments":
+        null}}, "prefillPassengerAPISDocuments": null}'}
+    headers:
+      Access-Control-Allow-Credentials: ['true']
+      Access-Control-Allow-Headers: ['origin, content-type, accept, authorization,
+          token, User-Agent, X-Forwarded-For, X-User-Experience-ID, X-Request-ID,
+          X-API-Key, X-Account-Number, X-Swa-Region, X-Channel-Id, X-Api-IDToken,
+          true-host']
+      Access-Control-Allow-Methods: ['GET, POST, PUT, DELETE, OPTIONS, HEAD']
+      Access-Control-Allow-Origin: ['']
+      Access-Control-Expose-Headers: ['X-User-Experience-ID, X-Request-ID']
+      Access-Control-Max-Age: ['1']
+      Cache-Control: ['max-age=0, no-cache, no-store']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      Date: ['Mon, 18 Feb 2019 06:29:03 GMT']
+      Expires: ['Mon, 18 Feb 2019 06:29:03 GMT']
+      Pragma: [no-cache]
+      Server: [Apache-Coyote/1.1]
+      Strict-Transport-Security: [max-age=60]
+      Vary: [Accept-Encoding]
+      X-Request-ID: [oMM1W3JIQrS_12lpUJIJdg]
+      X-User-Experience-ID: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+      content-length: ['13088']
+    status: {code: 200, message: OK}
+- request:
+    body: '{}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['5921']
+      Content-Type: [application/json]
+      Host: [mobile.southwest.com]
+      User-Agent: [python-requests/2.21.0]
+      X-API-Key: [l7xxb3dcccc4a5674bada48fc6fcf0946bc8]
+      X-User-Experience-Id: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+    method: POST
+    uri: https://mobile.southwest.com/api/mobile-air-operations/v1/mobile-air-operations/page/check-in
+  response:
+    body: {string: '{"checkInConfirmationPage": {"messages": null, "flights": [{"boundIndex":
+        0, "departureTime": "13:45", "gate": null, "passengers": "[REDACTED]", "flightNumber":
+        "1614", "hasWifi": true, "travelTime": "2h 20m"}], "_v1_infoNeededToViewBoardingPasses":
+        {"href": "/v1/mobile/record-locator/XXXXXX/mobile-boarding-passes", "method":
+        "GET", "query": {"first-name": "[REDACTED]", "last-name": "[REDACTED]"}},
+        "_links": {"boardingPasses": {"href": "/v1/mobile-air-operations/page/check-in/view-boarding-pass",
+        "method": "POST", "body": {"recordLocator": "[REDACTED]", "firstName": "[REDACTED]",
+        "lastName": "[REDACTED]", "checkInSessionToken": "[REDACTED]", "travelerID":
+        "2005DBDA00087702"}}, "viewBoardingPassIssuance": {"href": "/v1/mobile-air-operations/page/check-in/mobile-issuance/XXXXXX",
+        "method": "POST", "body": {"passengers": "[REDACTED]"}}}}}'}
+    headers:
+      Access-Control-Allow-Credentials: ['true']
+      Access-Control-Allow-Headers: ['origin, content-type, accept, authorization,
+          token, User-Agent, X-Forwarded-For, X-User-Experience-ID, X-Request-ID,
+          X-API-Key, X-Account-Number, X-Swa-Region, X-Channel-Id, X-Api-IDToken,
+          true-host']
+      Access-Control-Allow-Methods: ['GET, POST, PUT, DELETE, OPTIONS, HEAD']
+      Access-Control-Allow-Origin: ['']
+      Access-Control-Expose-Headers: ['X-User-Experience-ID, X-Request-ID']
+      Access-Control-Max-Age: ['1']
+      Cache-Control: ['max-age=0, no-cache, no-store']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      Date: ['Mon, 18 Feb 2019 06:29:03 GMT']
+      Expires: ['Mon, 18 Feb 2019 06:29:03 GMT']
+      Pragma: [no-cache]
+      Server: [Apache-Coyote/1.1]
+      Strict-Transport-Security: [max-age=60]
+      Vary: [Accept-Encoding]
+      X-Request-ID: [-UaFbua-QXu62S3ZInJ-WQ]
+      X-User-Experience-ID: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
+      content-length: ['12674']
+    status: {code: 200, message: OK}
+version: 1
