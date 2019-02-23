@@ -20,10 +20,9 @@ from dateutil.parser import parse
 from docopt import docopt
 from math import trunc
 from pytz import utc
-from southwest import Reservation
+from southwest import Reservation, openflights
 from threading import Thread
 from tzlocal import get_localzone
-import openflights
 import sys
 import time
 

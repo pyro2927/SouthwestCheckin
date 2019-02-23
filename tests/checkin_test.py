@@ -2,6 +2,7 @@ import json
 import pytest
 import requests
 import southwest
+import checkin
 from datetime import datetime, timedelta
 from .my_vcr import custom_vcr
 from pytz import timezone, utc
@@ -31,13 +32,14 @@ def test_checkin():
         pytest.fail("Error checking in")
 
 
-def test_notifications():
-    phone = southwest.Notifications.Phone('1234567890')
-    email = southwest.Notifications.Email('test@example.com')
-    r.notifications = [phone, email]
-    # TODO: test firing these off
-
-
 @my_vcr.use_cassette()
 def test_openflights_api():
     assert southwest.timezone_for_airport('LAX').zone == "America/Los_Angeles"
+
+
+@my_vcr.use_cassette()
+def test_cli():
+    try:
+        checkin.auto_checkin('XXXXXX', 'John', 'Smith')
+    except Exception:
+        pytest.fail("cli error")
