@@ -26,8 +26,6 @@ from tzlocal import get_localzone
 import sys
 import time
 
-CHECKIN_EARLY_SECONDS = 5
-
 
 def schedule_checkin(flight_time, reservation):
     checkin_time = flight_time - timedelta(days=1)
@@ -35,7 +33,7 @@ def schedule_checkin(flight_time, reservation):
     # check to see if we need to sleep until 24 hours before flight
     if checkin_time > current_time:
         # calculate duration to sleep
-        delta = (checkin_time - current_time).total_seconds() - CHECKIN_EARLY_SECONDS
+        delta = (checkin_time - current_time).total_seconds() - reservation.CHECKIN_EARLY_SECONDS
         # pretty print our wait time
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
@@ -53,7 +51,6 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
 
     # Get our local current time
     now = datetime.now(utc).astimezone(get_localzone())
-    tomorrow = now + timedelta(days=1)
 
     threads = []
 
