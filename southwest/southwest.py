@@ -34,7 +34,7 @@ class Reservation():
                 if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
                     attempts += 1
                     print(data['message'])
-                    if attempts > retries:
+                    if attempts > retries or data['messageKey'] != "ERROR__AIR_TRAVEL__BEFORE_CHECKIN_WINDOW":
                         sys.exit("Unable to get data, killing self")
                     sleep(self.CHECKIN_INTERVAL_SECONDS)
                     continue
@@ -59,7 +59,8 @@ class Reservation():
         return self.load_json_page(self.with_suffix("mobile-misc/v1/mobile-misc/page/view-reservation/"))
 
     def get_checkin_data(self):
-        return self.load_json_page(self.with_suffix("mobile-air-operations/v1/mobile-air-operations/page/check-in/"))
+        return self.load_json_page(self.with_suffix("mobile-air-operations/v1/mobile-air-operations/page/check-in/"),
+                                   retries=(4 * self.CHECKIN_EARLY_SECONDS) / self.CHECKIN_INTERVAL_SECONDS)
 
     def checkin(self):
         data = self.get_checkin_data()
