@@ -73,6 +73,9 @@ class Reservation():
         return confirmation
 
     def send_notification(self, checkindata):
+        if not checkindata['_links']:
+            print("Mobile boarding passes not eligible for this reservation")
+            return
         info_needed = checkindata['_links']['boardingPasses']
         url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
         mbpdata = self.load_json_page(url, info_needed['body'])
