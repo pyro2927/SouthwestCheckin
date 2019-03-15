@@ -33,6 +33,17 @@ def test_checkin():
 
 
 @my_vcr.use_cassette()
+def test_checkin_without_passes():
+    phone = southwest.Notifications.Phone('1234567890')
+    email = southwest.Notifications.Email('test@example.com')
+    r.notifications = [phone, email]
+    try:
+        r.checkin()
+    except Exception:
+        pytest.fail("Error checking in")
+
+
+@my_vcr.use_cassette()
 def test_openflights_api():
     assert southwest.timezone_for_airport('LAX').zone == "America/Los_Angeles"
 
