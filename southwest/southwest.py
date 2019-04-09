@@ -35,12 +35,12 @@ class Reservation():
     def safe_request(self, url, body=None):
         try:
             attempts = 0
-            header = Reservation.generate_headers()
+            headers = Reservation.generate_headers()
             while True:
                 if body is not None:
-                    r = requests.post(url, headers=header, json=body)
+                    r = requests.post(url, headers=headers, json=body)
                 else:
-                    r = requests.get(url, headers=header)
+                    r = requests.get(url, headers=headers)
                 data = r.json()
                 if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
                     attempts += 1
