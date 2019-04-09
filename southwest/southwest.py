@@ -13,7 +13,7 @@ class Reservation():
         self.notifications = []
 
 
-    def generate_headers
+    def generate_headers():
         config_js = requests.get('https://mobile.southwest.com/js/config.js')
         if config_js.status_code == requests.codes.ok:
             modded = config_js.text[config_js.text.index("API_KEY"):]
