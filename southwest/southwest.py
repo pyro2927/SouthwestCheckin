@@ -7,6 +7,9 @@ config_js = requests.get('https://mobile.southwest.com/js/config.js')
 if config_js.status_code == requests.codes.ok:
     modded = config_js.text[config_js.text.index("API_KEY"):]
     API_KEY = modded[modded.index(':') + 1:modded.index(',')].strip('"')
+else:
+    print("Couldn't get API_KEY")
+    sys.exit(1)
 
 USER_EXPERIENCE_KEY = str(uuid.uuid1()).upper()
 BASE_URL = 'https://mobile.southwest.com/api/'
