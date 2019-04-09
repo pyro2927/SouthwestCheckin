@@ -15,7 +15,7 @@ class Reservation():
         self.last = last
         self.notifications = []
 
-
+    @staticmethod
     def generate_headers():
         config_js = requests.get('https://mobile.southwest.com/js/config.js')
         if config_js.status_code == requests.codes.ok:
@@ -35,7 +35,7 @@ class Reservation():
     def safe_request(self, url, body=None):
         try:
             attempts = 0
-            header = generate_headers()
+            header = Reservation.generate_headers()
             while True:
                 if body is not None:
                     r = requests.post(url, headers=header, json=body)
