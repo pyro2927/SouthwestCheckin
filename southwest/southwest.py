@@ -2,8 +2,8 @@ from time import sleep
 import requests
 import sys
 
-API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
-USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
+API_KEY = 'l7xx0a43088fe6254712b10787646d1b298e'
+USER_EXPERIENCE_KEY = 'f6d3cb28-ed9c-4a89-aca7-cb39a9d75'
 BASE_URL = 'https://mobile.southwest.com/api/'
 CHECKIN_INTERVAL_SECONDS = 0.25
 MAX_ATTEMPTS = 40
