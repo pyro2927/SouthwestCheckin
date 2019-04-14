@@ -14,11 +14,11 @@ headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', '
 
 class Reservation():
 
-    def __init__(self, number, first, last, notifications=[]):
+    def __init__(self, number, first, last, notifications):
         self.number = number
         self.first = first
         self.last = last
-        self.notifications = []
+        self.notifications = notifications
 
     # You might ask yourself, "Why the hell does this exist?"
     # Basically, there sometimes appears a "hiccup" in Southwest where things
