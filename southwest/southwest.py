@@ -14,7 +14,7 @@ headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', '
 
 class Reservation():
 
-    def __init__(self, number, first, last, notifications):
+    def __init__(self, number, first, last, notifications=[]):
         self.number = number
         self.first = first
         self.last = last
