@@ -13,6 +13,11 @@ r = southwest.Reservation('XXXXXX', 'John', 'Smith')
 
 
 @my_vcr.use_cassette()
+def test_generate_headers():
+    print(southwest.Reservation.generate_headers())
+
+
+@my_vcr.use_cassette()
 def test_reservation_lookup():
     print(r.notifications)
     try:

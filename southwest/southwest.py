@@ -1,15 +1,11 @@
 from time import sleep
 import requests
 import sys
+import uuid
 
-API_KEY = 'l7xxb3dcccc4a5674bada48fc6fcf0946bc8'
-USER_EXPERIENCE_KEY = 'AAAA3198-4545-46F4-9A05-BB3E868BEFF5'
 BASE_URL = 'https://mobile.southwest.com/api/'
 CHECKIN_INTERVAL_SECONDS = 0.25
 MAX_ATTEMPTS = 40
-
-# Pulled from proxying the Southwest iOS App
-headers = {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
 
 
 class Reservation():
@@ -20,12 +16,27 @@ class Reservation():
         self.last = last
         self.notifications = []
 
+    @staticmethod
+    def generate_headers():
+        config_js = requests.get('https://mobile.southwest.com/js/config.js')
+        if config_js.status_code == requests.codes.ok:
+            modded = config_js.text[config_js.text.index("API_KEY"):]
+            API_KEY = modded[modded.index(':') + 1:modded.index(',')].strip('"')
+        else:
+            print("Couldn't get API_KEY")
+            sys.exit(1)
+
+        USER_EXPERIENCE_KEY = str(uuid.uuid1()).upper()
+        # Pulled from proxying the Southwest iOS App
+        return {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
+
     # You might ask yourself, "Why the hell does this exist?"
     # Basically, there sometimes appears a "hiccup" in Southwest where things
     # aren't exactly available 24-hours before, so we try a few times
     def safe_request(self, url, body=None):
         try:
             attempts = 0
+            headers = Reservation.generate_headers()
             while True:
                 if body is not None:
                     r = requests.post(url, headers=headers, json=body)

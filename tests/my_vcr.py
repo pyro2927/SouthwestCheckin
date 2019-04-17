@@ -34,10 +34,12 @@ def filter_payload(response):
     if len(s) == 0:
         return response
     string_body = s.decode('utf8')
-    body = json.loads(string_body)
-    redact(body)
-    response['body']['string'] = json.dumps(body).encode()
-    return response
+    try:
+        body = json.loads(string_body)
+        redact(body)
+        response['body']['string'] = json.dumps(body).encode()
+    finally:
+        return response
 
 
 def custom_vcr():
