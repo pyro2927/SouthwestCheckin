@@ -22,7 +22,6 @@ from math import trunc
 from pytz import utc
 from southwest import Reservation, openflights
 from threading import Thread
-from tzlocal import get_localzone
 import sys
 import time
 
@@ -31,7 +30,7 @@ CHECKIN_EARLY_SECONDS = 5
 
 def schedule_checkin(flight_time, reservation):
     checkin_time = flight_time - timedelta(days=1)
-    current_time = datetime.now(utc).astimezone(get_localzone())
+    current_time = datetime.utcnow().replace(tzinfo=utc)
     # check to see if we need to sleep until 24 hours before flight
     if checkin_time > current_time:
         # calculate duration to sleep
@@ -52,7 +51,7 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
     body = r.lookup_existing_reservation()
 
     # Get our local current time
-    now = datetime.now(utc).astimezone(get_localzone())
+    now = datetime.utcnow().replace(tzinfo=utc)
     tomorrow = now + timedelta(days=1)
 
     threads = []
