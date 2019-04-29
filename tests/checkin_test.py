@@ -13,7 +13,9 @@ r = southwest.Reservation('XXXXXX', 'John', 'Smith')
 
 @my_vcr.use_cassette()
 def test_generate_headers():
-    print(southwest.Reservation.generate_headers())
+    headers = southwest.Reservation.generate_headers()
+    assert(headers['Content-Type'] == 'application/json')
+    assert(headers['X-API-Key'] == 'l7xx0a43088fe6254712b10787646d1b298e')
 
 
 @my_vcr.use_cassette()
