@@ -5,8 +5,7 @@ import southwest
 import checkin
 from datetime import datetime, timedelta
 from .my_vcr import custom_vcr
-from pytz import timezone, utc
-from tzlocal import get_localzone
+from pytz import timezone
 
 my_vcr = custom_vcr()
 r = southwest.Reservation('XXXXXX', 'John', 'Smith')
@@ -14,12 +13,13 @@ r = southwest.Reservation('XXXXXX', 'John', 'Smith')
 
 @my_vcr.use_cassette()
 def test_generate_headers():
-    print(southwest.Reservation.generate_headers())
+    headers = southwest.Reservation.generate_headers()
+    assert(headers['Content-Type'] == 'application/json')
+    assert(headers['X-API-Key'] == 'l7xx0a43088fe6254712b10787646d1b298e')
 
 
 @my_vcr.use_cassette()
 def test_reservation_lookup():
-    print(r.notifications)
     try:
         r.lookup_existing_reservation()
     except Exception:

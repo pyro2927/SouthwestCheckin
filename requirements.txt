@@ -9,6 +9,5 @@ python-dateutil
 pytz
 requests
 requests_mock
-tzlocal
 uuid
 vcrpy
