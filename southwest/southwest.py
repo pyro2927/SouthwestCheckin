@@ -14,7 +14,7 @@ class Reservation():
         self.number = number
         self.first = first
         self.last = last
-        self.notifications = []
+        self.notifications = notifications
 
     @staticmethod
     def generate_headers():
