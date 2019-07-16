@@ -14,7 +14,7 @@ interactions:
         i={};return t.m=e,t.c=i,t.d=function(e,i,r){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var
         i=e&&e.__esModule?function(){return e.default}:function(){return e};return
         t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=9)}({9:function(e,t,i){"use
-        strict";e.exports={MOBILE_API:"/api/extensions/",ACCOUNTS_API:"/api/customer/",RESERVATIONS_API:"/api/reservations-api/",TRAVEL_API:"/api/travel-api/",LUV_API:"https://luv.southwest.com",CAR_API:"/api/car-reservations/",CHAPI_MISC:"/api/mobile-misc/",CHAPI_AIR_OPERATIONS:"/api/mobile-air-operations/",CHAPI_AIR_BOOKING:"/api/mobile-air-booking/",OAUTH_API:"/api/security/",LOGGING_API:"/api/logging/",OAUTH_CLIENT_ID:"19ed95ce-83c1-4016-bfda-77b1d8740c9f",CONTENT_API:"/api/content-delivery/",API_KEY:"l7xx0a43088fe6254712b10787646d1b298e",GOOGLE_MAPS_CLIENT_ID:"gme-southwest",ANALYTICS_URL:"/content/app/scripts/analytics/dtm.js",USER_CAN_CHANGE_TOGGLES:!1,BRANCH_KEY:"key_live_giugWIpIXUYa4N52lEYdgbcfDyg004TU"}}});'}
+        strict";e.exports={MOBILE_API:"/api/extensions/",ACCOUNTS_API:"/api/customer/",RESERVATIONS_API:"/api/reservations-api/",TRAVEL_API:"/api/travel-api/",LUV_API:"https://luv.southwest.com",CAR_API:"/api/car-reservations/",CHAPI_MISC:"/api/mobile-air-booking/",CHAPI_AIR_OPERATIONS:"/api/mobile-air-operations/",CHAPI_AIR_BOOKING:"/api/mobile-air-booking/",OAUTH_API:"/api/security/",LOGGING_API:"/api/logging/",OAUTH_CLIENT_ID:"19ed95ce-83c1-4016-bfda-77b1d8740c9f",CONTENT_API:"/api/content-delivery/",API_KEY:"l7xx0a43088fe6254712b10787646d1b298e",GOOGLE_MAPS_CLIENT_ID:"gme-southwest",ANALYTICS_URL:"/content/app/scripts/analytics/dtm.js",USER_CAN_CHANGE_TOGGLES:!1,BRANCH_KEY:"key_live_giugWIpIXUYa4N52lEYdgbcfDyg004TU"}}});'}
     headers:
       accept-ranges: [bytes]
       cache-control: [max-age=595]
@@ -74,7 +74,7 @@ interactions:
       X-API-Key: [l7xxb3dcccc4a5674bada48fc6fcf0946bc8]
       X-User-Experience-Id: [AAAA3198-4545-46F4-9A05-BB3E868BEFF5]
     method: GET
-    uri: https://mobile.southwest.com/api/mobile-misc/v1/mobile-misc/page/view-reservation/XXXXXX
+    uri: https://mobile.southwest.com/api/mobile-air-booking/v1/mobile-air-booking/page/view-reservation/XXXXXX
   response:
     body: {string: '{"viewReservationViewPage": {"dates": {"first": "2019-02-18",
         "second": null}, "checkInIneligibilityReason": null, "destinationDescription":
