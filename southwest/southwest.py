@@ -68,7 +68,8 @@ class Reservation():
 
     def lookup_existing_reservation(self):
         # Find our existing record
-        return self.load_json_page(self.with_suffix("mobile-misc/v1/mobile-misc/page/view-reservation/"))
+        #return self.load_json_page(self.with_suffix("mobile-misc/v1/mobile-misc/page/view-reservation/"))
+        return self.load_json_page(self.with_suffix("mobile-air-operations/v1/mobile-air-operations/page/check-in/"))
 
     def get_checkin_data(self):
         return self.load_json_page(self.with_suffix("mobile-air-operations/v1/mobile-air-operations/page/check-in/"))

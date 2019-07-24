@@ -1,6 +1,8 @@
-*.pyc
+.pyc
 *.swp
 .cache/
 .coverage
 htmlcov/
 coverage.xml
+./auto.sh
+

@@ -50,7 +50,6 @@ def schedule_checkin(flight_time, reservation):
 def auto_checkin(reservation_number, first_name, last_name, notify=[]):
     r = Reservation(reservation_number, first_name, last_name, notify)
     body = r.lookup_existing_reservation()
-
     # Get our local current time
     now = datetime.now(utc).astimezone(get_localzone())
     tomorrow = now + timedelta(days=1)
@@ -58,11 +57,11 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
     threads = []
 
     # find all eligible legs for checkin
-    for leg in body['bounds']:
+    for leg in body['cards']:
         # calculate departure for this leg
-        airport = "{}, {}".format(leg['departureAirport']['name'], leg['departureAirport']['state'])
-        takeoff = "{} {}".format(leg['departureDate'], leg['departureTime'])
-        airport_tz = openflights.timezone_for_airport(leg['departureAirport']['code'])
+        airport = "{}".format(leg['departureAirport'])
+        takeoff = "{} {}".format(leg['dates']['first'], leg['departureTime'])
+        airport_tz = openflights.timezone_for_airport(leg['departureAirport'])
         date = airport_tz.localize(datetime.strptime(takeoff, '%Y-%m-%d %H:%M'))
         if date > now:
             # found a flight for checkin!
