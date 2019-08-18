@@ -85,7 +85,7 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
 
 if __name__ == '__main__':
 
-    arguments = docopt(__doc__, version='Southwest Checkin 0.2')
+    arguments = docopt(__doc__, version='Southwest Checkin 1')
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
     last_name = arguments['LAST_NAME']
