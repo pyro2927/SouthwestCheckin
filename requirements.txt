@@ -1,7 +1,10 @@
 coverage
 datetime
 docopts
+flask
+flask_sqlalchemy
 pycodestyle
+pymessenger
 pytest
 pytest-cov
 pytest-mock
@@ -9,5 +12,6 @@ python-dateutil
 pytz
 requests
 requests_mock
+slackclient
 uuid
 vcrpy
