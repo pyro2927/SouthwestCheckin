@@ -100,6 +100,7 @@ if __name__ == '__main__':
         notifications.append({'mediaType': 'SMS', 'phoneNumber': mobile})
 
     try:
+        print("Attempting to check in {} {}. Confirmation: {}\n".format(first_name, last_name, reservation_number))
         auto_checkin(reservation_number, first_name, last_name, notifications)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
