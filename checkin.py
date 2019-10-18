@@ -2,7 +2,7 @@
 """Southwest Checkin.
 
 Usage:
-  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [--email=<email_addr> | --mobile=<phone_num>] [-v | --verbose]
+  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [-v | --verbose]
   checkin.py (-h | --help)
   checkin.py --version
 
@@ -86,11 +86,11 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
 if __name__ == '__main__':
 
     arguments = docopt(__doc__, version='Southwest Checkin 1')
-    reservation_number = arguments['CONFIRMATION_NUMBER']
-    first_name = arguments['FIRST_NAME']
-    last_name = arguments['LAST_NAME']
-    email = arguments['--email']
-    mobile = arguments['--mobile']
+    reservation_number = arguments.get('CONFIRMATION_NUMBER')
+    first_name = arguments.get('FIRST_NAME')
+    last_name = arguments.get('LAST_NAME')
+    email = arguments.get('--email')
+    mobile = arguments.get('--mobile')
 
     # build out notifications
     notifications = []
