@@ -46,8 +46,8 @@ def schedule_checkin(flight_time, reservation):
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
 
 
-def auto_checkin(reservation_number, first_name, last_name, notify=[]):
-    r = Reservation(reservation_number, first_name, last_name, notify)
+def auto_checkin(reservation_number, first_name, last_name, verbose, notify=[]):
+    r = Reservation(reservation_number, first_name, last_name, verbose, notify)
     body = r.lookup_existing_reservation()
 
     # Get our local current time
@@ -85,12 +85,13 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
 
 if __name__ == '__main__':
 
-    arguments = docopt(__doc__, version='Southwest Checkin 1')
+    arguments = docopt(__doc__, version='Southwest Checkin 2')
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
     last_name = arguments['LAST_NAME']
     email = arguments['--email']
     mobile = arguments['--mobile']
+    verbose = arguments['--verbose']
 
     # build out notifications
     notifications = []
@@ -100,7 +101,7 @@ if __name__ == '__main__':
         notifications.append({'mediaType': 'SMS', 'phoneNumber': mobile})
 
     try:
-        auto_checkin(reservation_number, first_name, last_name, notifications)
+        auto_checkin(reservation_number, first_name, last_name, verbose, notifications)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
         sys.exit()
