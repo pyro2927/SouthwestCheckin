@@ -11,7 +11,7 @@ MAX_ATTEMPTS = 40
 
 class Reservation():
 
-    def __init__(self, number, first, last, verbose, notifications=[]):
+    def __init__(self, number, first, last, notifications=[], verbose=False):
         self.number = number
         self.first = first
         self.last = last
