@@ -1,5 +1,6 @@
 from time import sleep
 import requests
+import json
 import sys
 import uuid
 
@@ -10,11 +11,12 @@ MAX_ATTEMPTS = 40
 
 class Reservation():
 
-    def __init__(self, number, first, last, notifications=[]):
+    def __init__(self, number, first, last, notifications=[], verbose=False):
         self.number = number
         self.first = first
         self.last = last
         self.notifications = notifications
+        self.verbose = verbose
 
     @staticmethod
     def generate_headers():
@@ -45,11 +47,18 @@ class Reservation():
                 data = r.json()
                 if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
                     attempts += 1
-                    print(data['message'])
+                    if not self.verbose:
+                        print(data['message'])
+                    else:
+                        print(r.headers)
+                        print(json.dumps(data, indent=2))
                     if attempts > MAX_ATTEMPTS:
                         sys.exit("Unable to get data, killing self")
                     sleep(CHECKIN_INTERVAL_SECONDS)
                     continue
+                if self.verbose:
+                    print(r.headers)
+                    print(json.dumps(data, indent=2))
                 return data
         except ValueError:
             # Ignore responses with no json data in body

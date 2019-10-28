@@ -5,3 +5,6 @@ plugins:
     checks:
       E501:
         enabled: false
+      argument-count:
+        config:
+          threshold: 5
