@@ -39,7 +39,11 @@ def schedule_checkin(flight_time, reservation):
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
         print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
-        time.sleep(delta)
+        try:
+            time.sleep(delta)
+        except OverflowError:
+            print("System unable to sleep for that long, try checking in closer to your departure date")
+            sys.exit(1)
     data = reservation.checkin()
     for flight in data['flights']:
         for doc in flight['passengers']:
