@@ -96,13 +96,18 @@ class Reservation():
         if not checkindata['_links']:
             print("Mobile boarding passes not eligible for this reservation")
             return
-        info_needed = checkindata['_links']['boardingPasses']
-        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-        mbpdata = self.load_json_page(url, info_needed['body'])
-        info_needed = mbpdata['_links']
-        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-        print("Attempting to send boarding pass...")
-        for n in self.notifications:
-            body = info_needed['body'].copy()
-            body.update(n)
-            self.safe_request(url, body)
+        # We don't want failure to send notification to cause the program to bomb out
+        # wrap this in a try block to gracefully fail
+        try:
+            info_needed = checkindata['_links']['boardingPasses']
+            url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+            mbpdata = self.load_json_page(url, info_needed['body'])
+            info_needed = mbpdata['_links']
+            url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
+            print("Attempting to send boarding pass...")
+            for n in self.notifications:
+                body = info_needed['body'].copy()
+                body.update(n)
+                self.safe_request(url, body)
+        except:
+            print("Failure when sending boarding pass notification(s)")
