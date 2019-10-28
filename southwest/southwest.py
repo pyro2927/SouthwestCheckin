@@ -109,5 +109,5 @@ class Reservation():
                 body = info_needed['body'].copy()
                 body.update(n)
                 self.safe_request(url, body)
-        except:
+        except KeyError:
             print("Failure when sending boarding pass notification(s)")
