@@ -11,11 +11,10 @@ MAX_ATTEMPTS = 40
 
 class Reservation():
 
-    def __init__(self, number, first, last, notifications=[], verbose=False):
+    def __init__(self, number, first, last, verbose=False):
         self.number = number
         self.first = first
         self.last = last
-        self.notifications = notifications
         self.verbose = verbose
 
     @staticmethod
@@ -88,26 +87,4 @@ class Reservation():
         url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
         print("Attempting check-in...")
         confirmation = self.load_json_page(url, info_needed['body'])
-        if len(self.notifications) > 0:
-            self.send_notification(confirmation)
         return confirmation
-
-    def send_notification(self, checkindata):
-        if not checkindata['_links']:
-            print("Mobile boarding passes not eligible for this reservation")
-            return
-        # We don't want failure to send notification to cause the program to bomb out
-        # wrap this in a try block to gracefully fail
-        try:
-            info_needed = checkindata['_links']['boardingPasses']
-            url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-            mbpdata = self.load_json_page(url, info_needed['body'])
-            info_needed = mbpdata['_links']
-            url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-            print("Attempting to send boarding pass...")
-            for n in self.notifications:
-                body = info_needed['body'].copy()
-                body.update(n)
-                self.safe_request(url, body)
-        except KeyError:
-            print("Failure when sending boarding pass notification(s)")

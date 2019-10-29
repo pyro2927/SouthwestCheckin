@@ -28,9 +28,6 @@ def test_reservation_lookup():
 
 @my_vcr.use_cassette()
 def test_checkin():
-    phone = southwest.Notifications.Phone('1234567890')
-    email = southwest.Notifications.Email('test@example.com')
-    r.notifications = [phone, email]
     try:
         r.checkin()
     except Exception:
@@ -39,9 +36,6 @@ def test_checkin():
 
 @my_vcr.use_cassette()
 def test_checkin_without_passes():
-    phone = southwest.Notifications.Phone('1234567890')
-    email = southwest.Notifications.Email('test@example.com')
-    r.notifications = [phone, email]
     try:
         r.checkin()
     except Exception:
