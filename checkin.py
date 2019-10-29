@@ -2,15 +2,13 @@
 """Southwest Checkin.
 
 Usage:
-  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [--email=<email_addr> | --mobile=<phone_num>] [-v | --verbose]
+  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [-v | --verbose]
   checkin.py (-h | --help)
   checkin.py --version
 
 Options:
   -h --help     Show this screen.
   -v --verbose  Show debugging information.
-  --email=<email_addr>  Email address where notification will be sent to.
-  --mobile=<phone_num>  Phone number where text notification will be sent to.
   --version     Show version.
 
 """
@@ -50,8 +48,8 @@ def schedule_checkin(flight_time, reservation):
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
 
 
-def auto_checkin(reservation_number, first_name, last_name, notify=[], verbose=False):
-    r = Reservation(reservation_number, first_name, last_name, notify, verbose)
+def auto_checkin(reservation_number, first_name, last_name, verbose=False):
+    r = Reservation(reservation_number, first_name, last_name, verbose)
     body = r.lookup_existing_reservation()
 
     # Get our local current time
@@ -89,23 +87,14 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[], verbose=F
 
 if __name__ == '__main__':
 
-    arguments = docopt(__doc__, version='Southwest Checkin 2')
+    arguments = docopt(__doc__, version='Southwest Checkin 3')
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
     last_name = arguments['LAST_NAME']
-    email = arguments['--email']
-    mobile = arguments['--mobile']
     verbose = arguments['--verbose']
 
-    # build out notifications
-    notifications = []
-    if email is not None:
-        notifications.append({'mediaType': 'EMAIL', 'emailAddress': email})
-    if mobile is not None:
-        notifications.append({'mediaType': 'SMS', 'phoneNumber': mobile})
-
     try:
-        auto_checkin(reservation_number, first_name, last_name, notifications, verbose)
+        auto_checkin(reservation_number, first_name, last_name, verbose)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
         sys.exit()
