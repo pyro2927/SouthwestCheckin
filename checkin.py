@@ -66,15 +66,7 @@ def auto_multi_checkin(reservation_details, verbose=False):
         t.start()
         threads.append(t)
 
-    # cleanup threads while handling Ctrl+C
-    while True:
-        if len(threads) == 0:
-            break
-        for t in threads:
-            t.join(20)
-            if not t.isAlive():
-                threads.remove(t)
-                break
+    handle_threads(threads)
 
 
 def auto_checkin(reservation_number, first_name, last_name, verbose=False):
@@ -103,7 +95,11 @@ def auto_checkin(reservation_number, first_name, last_name, verbose=False):
             t.start()
             threads.append(t)
 
-    # cleanup threads while handling Ctrl+C
+    handle_threads(threads)
+
+
+def handle_threads(threads):
+     # cleanup threads while handling Ctrl+C
     while True:
         if len(threads) == 0:
             break
