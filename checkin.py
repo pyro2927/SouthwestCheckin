@@ -99,7 +99,7 @@ def auto_checkin(reservation_number, first_name, last_name, verbose=False):
 
 
 def handle_threads(threads):
-     # cleanup threads while handling Ctrl+C
+    # cleanup threads while handling Ctrl+C
     while True:
         if len(threads) == 0:
             break
