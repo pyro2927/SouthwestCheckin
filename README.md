@@ -38,16 +38,30 @@ This script can either be ran directly on your host or within Docker.
 $ pip install -r requirements.txt
 ```
 
-#### Usage
+#### Usage (Single)
 
 ```bash
 $ python ./checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
 ```
 
+#### Usage (Multiple)
+
+The reservation details are passed as a comma-separated list including the confirmation number, first name, and last name for each reservation.
+
+```bash
+$ python ./checkin.py RESERVATION_LIST
+```
+
 ### Docker
 
-#### Usage
+#### Usage (Single)
 
 ```bash
 $ sudo docker run -it pyro2927/southwestcheckin:latest CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
+```
+
+#### Usage (Multiple)
+
+```bash
+$ sudo docker run -it pyro2927/southwestcheckin:latest RESERVATION_LIST
 ```
