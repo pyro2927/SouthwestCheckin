@@ -36,7 +36,7 @@ def schedule_checkin(flight_time, reservation):
         # pretty print our wait time
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
-        print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), trunc(s)))
+        print("Too early to check in. Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), trunc(s)))
         try:
             time.sleep(delta)
         except OverflowError:
@@ -65,6 +65,7 @@ def auto_multi_checkin(reservation_details, verbose=False):
         t.daemon = True
         t.start()
         threads.append(t)
+        t.join()
 
     handle_threads(threads)
 
@@ -94,17 +95,15 @@ def auto_checkin(reservation_number, first_name, last_name, verbose=False):
             t.daemon = True
             t.start()
             threads.append(t)
+            t.join()
 
     handle_threads(threads)
 
 
 def handle_threads(threads):
     # cleanup threads while handling Ctrl+C
-    while True:
-        if len(threads) == 0:
-            break
+    while threads:
         for t in threads:
-            t.join(5)
             if not t.isAlive():
                 threads.remove(t)
                 break
