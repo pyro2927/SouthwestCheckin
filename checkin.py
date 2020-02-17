@@ -2,15 +2,13 @@
 """Southwest Checkin.
 
 Usage:
-  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [--email=<email_addr> | --mobile=<phone_num>] [-v | --verbose]
+  checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME [-v | --verbose]
   checkin.py (-h | --help)
   checkin.py --version
 
 Options:
   -h --help     Show this screen.
   -v --verbose  Show debugging information.
-  --email=<email_addr>  Email address where notification will be sent to.
-  --mobile=<phone_num>  Phone number where text notification will be sent to.
   --version     Show version.
 
 """
@@ -39,15 +37,19 @@ def schedule_checkin(flight_time, reservation):
         m, s = divmod(delta, 60)
         h, m = divmod(m, 60)
         print("Too early to check in.  Waiting {} hours, {} minutes, {} seconds".format(trunc(h), trunc(m), s))
-        time.sleep(delta)
+        try:
+            time.sleep(delta)
+        except OverflowError:
+            print("System unable to sleep for that long, try checking in closer to your departure date")
+            sys.exit(1)
     data = reservation.checkin()
     for flight in data['flights']:
         for doc in flight['passengers']:
             print("{} got {}{}!".format(doc['name'], doc['boardingGroup'], doc['boardingPosition']))
 
 
-def auto_checkin(reservation_number, first_name, last_name, notify=[]):
-    r = Reservation(reservation_number, first_name, last_name, notify)
+def auto_checkin(reservation_number, first_name, last_name, verbose=False):
+    r = Reservation(reservation_number, first_name, last_name, verbose)
     body = r.lookup_existing_reservation()
 
     # Get our local current time
@@ -85,23 +87,15 @@ def auto_checkin(reservation_number, first_name, last_name, notify=[]):
 
 if __name__ == '__main__':
 
-    arguments = docopt(__doc__, version='Southwest Checkin 1')
+    arguments = docopt(__doc__, version='Southwest Checkin 3')
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
     last_name = arguments['LAST_NAME']
-    email = arguments['--email']
-    mobile = arguments['--mobile']
-
-    # build out notifications
-    notifications = []
-    if email is not None:
-        notifications.append({'mediaType': 'EMAIL', 'emailAddress': email})
-    if mobile is not None:
-        notifications.append({'mediaType': 'SMS', 'phoneNumber': mobile})
+    verbose = arguments['--verbose']
 
     try:
         print("Attempting to check in {} {}. Confirmation: {}\n".format(first_name, last_name, reservation_number))
-        auto_checkin(reservation_number, first_name, last_name, notifications)
+        auto_checkin(reservation_number, first_name, last_name, verbose)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
         sys.exit()

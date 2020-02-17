@@ -1,5 +1,6 @@
 from time import sleep
 import requests
+import json
 import sys
 import uuid
 
@@ -10,11 +11,11 @@ MAX_ATTEMPTS = 40
 
 class Reservation():
 
-    def __init__(self, number, first, last, notifications=[]):
+    def __init__(self, number, first, last, verbose=False):
         self.number = number
         self.first = first
         self.last = last
-        self.notifications = notifications
+        self.verbose = verbose
 
     @staticmethod
     def generate_headers():
@@ -45,11 +46,18 @@ class Reservation():
                 data = r.json()
                 if 'httpStatusCode' in data and data['httpStatusCode'] in ['NOT_FOUND', 'BAD_REQUEST', 'FORBIDDEN']:
                     attempts += 1
-                    print(data['message'])
+                    if not self.verbose:
+                        print(data['message'])
+                    else:
+                        print(r.headers)
+                        print(json.dumps(data, indent=2))
                     if attempts > MAX_ATTEMPTS:
                         sys.exit("Unable to get data, killing self")
                     sleep(CHECKIN_INTERVAL_SECONDS)
                     continue
+                if self.verbose:
+                    print(r.headers)
+                    print(json.dumps(data, indent=2))
                 return data
         except ValueError:
             # Ignore responses with no json data in body
@@ -79,21 +87,4 @@ class Reservation():
         url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
         print("Attempting check-in...")
         confirmation = self.load_json_page(url, info_needed['body'])
-        if len(self.notifications) > 0:
-            self.send_notification(confirmation)
         return confirmation
-
-    def send_notification(self, checkindata):
-        if not checkindata['_links']:
-            print("Mobile boarding passes not eligible for this reservation")
-            return
-        info_needed = checkindata['_links']['boardingPasses']
-        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-        mbpdata = self.load_json_page(url, info_needed['body'])
-        info_needed = mbpdata['_links']
-        url = "{}mobile-air-operations{}".format(BASE_URL, info_needed['href'])
-        print("Attempting to send boarding pass...")
-        for n in self.notifications:
-            body = info_needed['body'].copy()
-            body.update(n)
-            self.safe_request(url, body)
