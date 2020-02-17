@@ -94,6 +94,7 @@ if __name__ == '__main__':
     verbose = arguments['--verbose']
 
     try:
+        print("Attempting to check in {} {}. Confirmation: {}\n".format(first_name, last_name, reservation_number))
         auto_checkin(reservation_number, first_name, last_name, verbose)
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
