@@ -29,7 +29,7 @@ class Reservation():
 
         USER_EXPERIENCE_KEY = str(uuid.uuid1()).upper()
         # Pulled from proxying the Southwest iOS App
-        return {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*'}
+        return {'Host': 'mobile.southwest.com', 'Content-Type': 'application/json', 'X-API-Key': API_KEY, 'X-User-Experience-Id': USER_EXPERIENCE_KEY, 'Accept': '*/*', 'X-Channel-ID': 'MWEB'}
 
     # You might ask yourself, "Why the hell does this exist?"
     # Basically, there sometimes appears a "hiccup" in Southwest where things
