@@ -80,7 +80,7 @@ def auto_checkin(reservation_number, first_name, last_name, verbose=False):
             break
         for t in threads:
             t.join(5)
-            if not t.isAlive():
+            if not t.is_alive():
                 threads.remove(t)
                 break
 
