@@ -4,3 +4,7 @@
 .coverage
 htmlcov/
 coverage.xml
+.DS_Store
+*.egg-info/
+dist/
+*venv
