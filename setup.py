@@ -10,7 +10,7 @@ from codecs import open
 __library_name__ = "southwest"
 __here__ = Path(__file__).resolve().parent
 
-with open(__here__ / "README.md", "rb") as f:
+with open(__here__ / "README.md", "r",  "utf-8") as f:
     __readme__ = f.read()
 
 with open(__here__ / __library_name__ / "VERSION", "r") as f:
