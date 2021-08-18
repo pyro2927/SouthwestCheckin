@@ -103,5 +103,6 @@ def checkin():
         print("Ctrl+C detected, canceling checkin")
         sys.exit()
 
+
 if __name__ == '__main__':
     checkin()
