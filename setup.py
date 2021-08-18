@@ -4,16 +4,16 @@ Packaging for direct pypi distribution and cli entrypoints
 
 """
 from setuptools import setup, find_packages
-from pathlib import Path
+from os import path
 from codecs import open
 
 __library_name__ = "southwest"
-__here__ = Path(__file__).resolve().parent
+__here__ = path.dirname(__file__)
 
-with open(__here__ / "README.md", "r",  "utf-8") as f:
+with open(path.join(__here__,"README.md"), "r",  "utf-8") as f:
     __readme__ = f.read()
 
-with open(__here__ / __library_name__ / "VERSION", "r") as f:
+with open(path.join(__here__, __library_name__ , "VERSION"), "r") as f:
     __version__ = f.read().strip()
 
 
