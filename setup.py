@@ -10,10 +10,10 @@ from codecs import open
 __library_name__ = "southwest"
 __here__ = Path(__file__).resolve().parent
 
-with open(__here__/"README.md", "rb") as f:
+with open(__here__ / "README.md", "rb") as f:
     __readme__ = f.read()
 
-with open(__here__/__library_name__/"VERSION", "r") as f:
+with open(__here__ / __library_name__ / "VERSION", "r") as f:
     __version__ = f.read().strip()
 
 
@@ -36,18 +36,10 @@ setup(
         "vcrpy",
     ],
     extras_require={
-        "dev": [
-            "pycodestyle",
-            "pytest",
-            "pytest-cov",
-            "pytest-mock",
-            "requests_mock",
-        ]
+        "dev": ["pycodestyle", "pytest", "pytest-cov", "pytest-mock", "requests_mock",]
     },
     entry_points={
-        "console_scripts":[
-            "checkin={}.checkin:checkin".format(__library_name__)
-        ]
+        "console_scripts": ["checkin={}.checkin:checkin".format(__library_name__)]
     },
     package_data={"": ["README.md", "LICENSE"], __library_name__: ["VERSION"]},
     include_package_data=True,
