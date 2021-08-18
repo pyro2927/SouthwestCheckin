@@ -3,6 +3,8 @@ language: python
 env:
   global:
     - CC_TEST_REPORTER_ID=3d0abe23b60c405d5de7e038f366649a8002c4ccedccabad3da0e3b3e9b5049b
+install:
+  pip install .[dev]
 python:
   - "2.7.15"
   - "3.7.1"

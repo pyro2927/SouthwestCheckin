@@ -35,13 +35,13 @@ This script can either be ran directly on your host or within Docker.
 #### Install Base Package Requirements
 
 ```bash
-$ pip install -r requirements.txt
+$ pip install .
 ```
 
 #### Usage
 
 ```bash
-$ python ./checkin.py CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
+$ checkin CONFIRMATION_NUMBER FIRST_NAME LAST_NAME
 ```
 
 ### Docker

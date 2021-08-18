@@ -1,5 +1,4 @@
 *.pyc
 Dockerfile
-README.md
 htmlcov/
 *.xml

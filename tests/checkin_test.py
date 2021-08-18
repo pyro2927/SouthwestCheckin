@@ -2,7 +2,7 @@ import json
 import pytest
 import requests
 import southwest
-import checkin
+from southwest import checkin
 from datetime import datetime, timedelta
 from .my_vcr import custom_vcr
 from pytz import timezone

@@ -1,6 +1,6 @@
 all: init test lint
 init:
-	pip install -r requirements.txt
+	pip install -e .[dev]
 
 test:
 	pytest --cov=southwest/ --cov=checkin

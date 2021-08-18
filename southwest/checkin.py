@@ -18,7 +18,7 @@ from dateutil.parser import parse
 from docopt import docopt
 from math import trunc
 from pytz import utc
-from southwest import Reservation, openflights
+from . import Reservation, openflights
 from threading import Thread
 import sys
 import time
@@ -85,8 +85,8 @@ def auto_checkin(reservation_number, first_name, last_name, verbose=False):
                 break
 
 
-if __name__ == '__main__':
-
+def checkin():
+    """main function: for entry_point"""
     arguments = docopt(__doc__, version='Southwest Checkin 3')
     reservation_number = arguments['CONFIRMATION_NUMBER']
     first_name = arguments['FIRST_NAME']
@@ -102,3 +102,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Ctrl+C detected, canceling checkin")
         sys.exit()
+
+
+if __name__ == '__main__':
+    checkin()
