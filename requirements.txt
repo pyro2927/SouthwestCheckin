@@ -11,3 +11,4 @@ requests
 requests_mock
 uuid
 vcrpy
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
